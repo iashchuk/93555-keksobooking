@@ -25,23 +25,26 @@ var offerTypesTranslation = {
   bungalo: 'Бунгало'
 };
 
-
 var ADDRESS_X = {
   start: 300,
   finish: 900
 };
+
 var ADDRESS_Y = {
   start: 130,
   finish: 630
 };
+
 var ROOMS = {
   min: 1,
   max: 5
 };
+
 var GUESTS = {
   min: 1,
   max: 50
 };
+
 var PRICE = {
   min: 1000,
   max: 1000000
@@ -53,7 +56,9 @@ var pinSizes = {
 };
 
 var TIMES = ['12:00', '13:00', '14:00'];
+
 var FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
+
 var PHOTOS = [
   'http://o0.github.io/assets/images/tokyo/hotel1.jpg',
   'http://o0.github.io/assets/images/tokyo/hotel2.jpg',
@@ -61,6 +66,7 @@ var PHOTOS = [
 ];
 
 var OBJECT_NUMBER = 8;
+
 
 var getRandomElement = function (arrayElements) {
   var index = Math.floor(Math.random() * arrayElements.length);
@@ -134,6 +140,7 @@ var createFeature = function (modifierName) {
   var feature = document.createElement('li');
   feature.classList.add('popup__feature');
   feature.classList.add('popup__feature--' + modifierName);
+
   return feature;
 };
 
@@ -146,6 +153,7 @@ var createPhoto = function (photoLink) {
   var photoTemplate = document.querySelector('template').content.querySelector('.popup__photo');
   var photo = photoTemplate.cloneNode();
   photo.src = photoLink;
+
   return photo;
 };
 
@@ -168,7 +176,6 @@ var renderMapPin = function (element) {
 
   return pin;
 };
-
 
 /**
  * Отрисовка карточки объявления
@@ -215,6 +222,7 @@ var renderMapFragment = function () {
     fragment.appendChild(renderMapPin(getAdvertCard(i)));
   }
   fragment.appendChild(renderAdvertCard(getAdvertCard(0)));
+
   return fragment;
 };
 
