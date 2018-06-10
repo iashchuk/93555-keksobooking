@@ -1,22 +1,80 @@
 'use strict';
 
-var avatar = {
+var offerOptions = {
+
+  TITLES: [
+    'Большая уютная квартира',
+    'Маленькая неуютная квартира',
+    'Огромный прекрасный дворец',
+    'Маленький ужасный дворец',
+    'Красивый гостевой домик',
+    'Некрасивый негостеприимный домик',
+    'Уютное бунгало далеко от моря',
+    'Неуютное бунгало по колено в воде'
+  ],
+  TYPES: [
+    'palace',
+    'flat',
+    'house',
+    'bungalo'
+  ],
+  TIMES: [
+    '12:00',
+    '13:00',
+    '14:00'
+  ],
+  FEATURES: [
+    'wifi',
+    'dishwasher',
+    'parking',
+    'washer',
+    'elevator',
+    'conditioner'
+  ],
+
+  PHOTOS: [
+    'http://o0.github.io/assets/images/tokyo/hotel1.jpg',
+    'http://o0.github.io/assets/images/tokyo/hotel2.jpg',
+    'http://o0.github.io/assets/images/tokyo/hotel3.jpg'
+  ],
+
+  rooms: {
+    MIN: 1,
+    MAX: 5
+  },
+
+  guests: {
+    MIN: 1,
+    MAX: 50
+  },
+
+  prices: {
+    MIN: 1000,
+    MAX: 1000000
+  }
+};
+
+var locationOptions = {
+  x: {
+    START: 300,
+    FINISH: 900
+  },
+  y: {
+    START: 130,
+    FINISH: 630
+  }
+};
+
+var pinSizes = {
+  width: 40,
+  height: 44
+};
+
+
+var avatarOptions = {
   PATH: 'img/avatars/user',
   EXTENSION: '.png'
 };
-
-var TITLE_TEXT = [
-  'Большая уютная квартира',
-  'Маленькая неуютная квартира',
-  'Огромный прекрасный дворец',
-  'Маленький ужасный дворец',
-  'Красивый гостевой домик',
-  'Некрасивый негостеприимный домик',
-  'Уютное бунгало далеко от моря',
-  'Неуютное бунгало по колено в воде'
-];
-
-var TYPE = ['palace', 'flat', 'house', 'bungalo'];
 
 var offerTypesTranslation = {
   flat: 'Квартира',
@@ -25,47 +83,13 @@ var offerTypesTranslation = {
   bungalo: 'Бунгало'
 };
 
-var ADDRESS_X = {
-  start: 300,
-  finish: 900
-};
+var QUANTITY_PINS = 8;
 
-var ADDRESS_Y = {
-  start: 130,
-  finish: 630
-};
-
-var ROOMS = {
-  min: 1,
-  max: 5
-};
-
-var GUESTS = {
-  min: 1,
-  max: 50
-};
-
-var PRICE = {
-  min: 1000,
-  max: 1000000
-};
-
-var pinSizes = {
-  width: 40,
-  height: 44
-};
-
-var TIMES = ['12:00', '13:00', '14:00'];
-
-var FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
-
-var PHOTOS = [
-  'http://o0.github.io/assets/images/tokyo/hotel1.jpg',
-  'http://o0.github.io/assets/images/tokyo/hotel2.jpg',
-  'http://o0.github.io/assets/images/tokyo/hotel3.jpg'
-];
-
-var OBJECT_NUMBER = 8;
+var map = document.querySelector('.map');
+var mapPins = map.querySelector('.map__pins');
+var mapCard = document.querySelector('template').content.querySelector('.map__card');
+var photoTemplate = document.querySelector('template').content.querySelector('.popup__photo');
+var mapPin = document.querySelector('template').content.querySelector('.map__pin');
 
 
 var getRandomElement = function (arrayElements) {
@@ -94,42 +118,74 @@ var shuffleElements = function (arrayElements) {
  */
 var getAvatarLink = function (numberPhoto) {
   var index = numberPhoto > 9 ? numberPhoto : '0' + numberPhoto;
-  return avatar.PATH + index + avatar.EXTENSION;
+  return avatarOptions.PATH + index + avatarOptions.EXTENSION;
 };
 
 /**
  * Функция генерации данных для объявления
  * @param {number} index
- * @return {Object}
+ * @return {Advert}
  */
-var getAdvertCard = function (index) {
-  var locationX = getRandomInRange(ADDRESS_X.start, ADDRESS_X.finish);
-  var locationY = getRandomInRange(ADDRESS_Y.start, ADDRESS_Y.finish);
+var getAdvertObject = function (index) {
+  var locationX = getRandomInRange(locationOptions.x.START, locationOptions.y.FINISH);
+  var locationY = getRandomInRange(locationOptions.x.START, locationOptions.y.FINISH);
 
-  var advertCard = {
+  var advertObject = {
     author: {
-      avatar: getAvatarLink(++index)
+      avatar: getAvatarLink(index + 1)
     },
     offer: {
-      title: TITLE_TEXT[index],
+      title: offerOptions.TITLES[index],
       address: locationX + ', ' + locationY,
-      price: getRandomInRange(PRICE.min, PRICE.max),
-      type: getRandomElement(TYPE),
-      rooms: getRandomInRange(ROOMS.min, ROOMS.max),
-      guests: getRandomInRange(GUESTS.min, GUESTS.max),
-      checkin: getRandomElement(TIMES),
-      checkout: getRandomElement(TIMES),
-      features: shuffleElements(FEATURES).slice(getRandomInRange(0, FEATURES.length)),
+      price: getRandomInRange(offerOptions.prices.MIN, offerOptions.prices.MAX),
+      type: getRandomElement(offerOptions.TYPES),
+      rooms: getRandomInRange(offerOptions.rooms.MIN, offerOptions.rooms.MAX),
+      guests: getRandomInRange(offerOptions.guests.MIN, offerOptions.guests.MAX),
+      checkin: getRandomElement(offerOptions.TIMES),
+      checkout: getRandomElement(offerOptions.TIMES),
+      features: shuffleElements(offerOptions.FEATURES).slice(getRandomInRange(0, offerOptions.FEATURES.length)),
       description: '',
-      photos: shuffleElements(PHOTOS)
+      photos: shuffleElements(offerOptions.PHOTOS)
     },
     location: {
       x: locationX,
       y: locationY
     }
   };
-  return advertCard;
+  return advertObject;
 };
+
+/**
+ * @typedef {Object} Advert
+ * @property {AvatarOptions}
+ * @property {OfferOptions}
+ * @property {LocationOptions}
+ */
+
+/**
+ * @typedef {Object} AvatarOptions
+ * @property {string} avatar
+ */
+
+/**
+ * @typedef {Object} OfferOptions
+ * @property {string} title
+ * @property {string} adress
+ * @property {number} price
+ * @property {number} rooms
+ * @property {number} guests
+ * @property {string} checkin
+ * @property {string} checkout
+ * @property {Array.<string>} features
+ * @property {string} description
+ * @property {Array.<string>} photos
+ */
+
+/**
+ * @typedef {Object} LocationOptions
+ * @property {string} x
+ * @property {string} y
+ */
 
 /**
  * Функция получения элемента иконки удобств
@@ -140,7 +196,6 @@ var createFeature = function (modifierName) {
   var feature = document.createElement('li');
   feature.classList.add('popup__feature');
   feature.classList.add('popup__feature--' + modifierName);
-
   return feature;
 };
 
@@ -150,20 +205,17 @@ var createFeature = function (modifierName) {
  * @return {Node}
  */
 var createPhoto = function (photoLink) {
-  var photoTemplate = document.querySelector('template').content.querySelector('.popup__photo');
   var photo = photoTemplate.cloneNode();
   photo.src = photoLink;
-
   return photo;
 };
 
 /**
  * Отрисовка метки объявления
- * @param {Object} element
+ * @param {Advert} element
  * @return {Node}
  */
 var renderMapPin = function (element) {
-  var mapPin = document.querySelector('template').content.querySelector('.map__pin');
   var pin = mapPin.cloneNode(true);
   var image = pin.querySelector('img');
   var width = pinSizes.width;
@@ -179,11 +231,10 @@ var renderMapPin = function (element) {
 
 /**
  * Отрисовка карточки объявления
- * @param {Object} element
+ * @param {Advert} element
  * @return {Node}
  */
 var renderAdvertCard = function (element) {
-  var mapCard = document.querySelector('template').content.querySelector('.map__card');
   var cardElement = mapCard.cloneNode(true);
   var cardPhotos = cardElement.querySelector('.popup__photos');
 
@@ -196,44 +247,53 @@ var renderAdvertCard = function (element) {
   cardElement.querySelector('.popup__description').textContent = element.offer.description;
   cardElement.querySelector('.popup__avatar').src = element.author.avatar;
 
-  var featureFragment = document.createDocumentFragment();
   element.offer.features.forEach(function (item) {
-    featureFragment.appendChild(createFeature(item));
+    cardElement.querySelector('.popup__features').appendChild(createFeature(item));
   });
-  cardElement.querySelector('.popup__features').appendChild(featureFragment);
 
-  var photoFragment = document.createDocumentFragment();
   element.offer.photos.forEach(function (item) {
-    photoFragment.appendChild(createPhoto(item));
+    cardElement.querySelector('.popup__photos').appendChild(createPhoto(item));
   });
   cardPhotos.removeChild(cardPhotos.children[0]);
-  cardElement.querySelector('.popup__photos').appendChild(photoFragment);
 
   return cardElement;
 };
 
 /**
- * Функция отрисовки объектов карты объявлений в необходимом количестве
- * @return {Node}
- */
-var renderMapFragment = function () {
-  var fragment = document.createDocumentFragment();
-  for (var i = 0; i < OBJECT_NUMBER; i++) {
-    fragment.appendChild(renderMapPin(getAdvertCard(i)));
-  }
-  fragment.appendChild(renderAdvertCard(getAdvertCard(0)));
+ * Функция получения массива данных по объявлениям
+ * @return {Array}
+*/
+var getAdvertData = function () {
+  var advertData = [];
 
+  for (var i = 0; i < QUANTITY_PINS; i++) {
+    advertData.push(getAdvertObject(i));
+  }
+  return advertData;
+};
+
+/**
+ * Функция отрисовки меток объявлений
+ * @param {Advert} element
+ * @return {Node}
+*/
+var renderPinFragment = function (element) {
+  var fragment = document.createDocumentFragment();
+  element.forEach(function (item) {
+    fragment.appendChild(renderMapPin(item));
+  });
   return fragment;
 };
 
 /**
- * Функция инициилизации карты
- */
+ * Функция инициилизации карты объявлений
+*/
 var initPage = function () {
-  var map = document.querySelector('.map');
   map.classList.remove('map--faded');
-  var mapFiltersContainer = map.querySelector('.map__filters-container');
-  map.insertBefore(renderMapFragment(), mapFiltersContainer);
+  var advertList = getAdvertData();
+  mapPins.appendChild(renderPinFragment(advertList));
+  var advertCardRender = renderAdvertCard(advertList[0]);
+  map.insertBefore(advertCardRender, map.querySelector('.map__filters-container'));
 };
 
 
