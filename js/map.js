@@ -94,7 +94,6 @@ var QUANTITY_PINS = 8;
 var map = document.querySelector('.map');
 var mapPins = map.querySelector('.map__pins');
 var mapCard = document.querySelector('template').content.querySelector('.map__card');
-var photoTemplate = document.querySelector('template').content.querySelector('.popup__photo');
 var mapPin = document.querySelector('template').content.querySelector('.map__pin');
 
 /**
@@ -262,7 +261,6 @@ var renderMapPin = function (element) {
  */
 var renderAdvertCard = function (element) {
   var cardElement = mapCard.cloneNode(true);
-  var cardPhotos = cardElement.querySelector('.popup__photos');
 
   cardElement.querySelector('.popup__title').textContent = element.offer.title;
   cardElement.querySelector('.popup__text--address').textContent = element.offer.address;
