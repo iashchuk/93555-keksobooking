@@ -66,8 +66,14 @@ var locationOptions = {
 };
 
 var pinSizes = {
-  width: 40,
-  height: 44
+  WIDTH: 40,
+  HEIGHT: 44
+};
+
+var photoAtributes = {
+  WIDTH: 45,
+  HEIGHT: 40,
+  ALT: 'Фотография жилья'
 };
 
 
@@ -91,16 +97,31 @@ var mapCard = document.querySelector('template').content.querySelector('.map__ca
 var photoTemplate = document.querySelector('template').content.querySelector('.popup__photo');
 var mapPin = document.querySelector('template').content.querySelector('.map__pin');
 
-
+/**
+ * Функция получения случайного элемента массива
+ * @param {Array} arrayElements
+ * @return {*}
+ */
 var getRandomElement = function (arrayElements) {
   var index = Math.floor(Math.random() * arrayElements.length);
   return arrayElements[index];
 };
 
+/**
+ * Функция получения случайного числа в интервале заданных чисел
+ * @param {number} min
+ * @param {number} max
+ * @return {number}
+ */
 var getRandomInRange = function (min, max) {
   return Math.floor(Math.random() * (max - min) + min);
 };
 
+/**
+ * Функция тасования массива по алгоритму Фишера-Йетса
+ * @param {Array} arrayElements
+ * @return {Array}
+ */
 var shuffleElements = function (arrayElements) {
   for (var i = arrayElements.length - 1; i > 0; i--) {
     var j = Math.floor(Math.random() * (i + 1));
@@ -157,18 +178,18 @@ var getAdvertObject = function (index) {
 
 /**
  * @typedef {Object} Advert
- * @property {AvatarOptions}
- * @property {OfferOptions}
- * @property {LocationOptions}
+ * @property {Avatar}
+ * @property {Offer}
+ * @property {Location}
  */
 
 /**
- * @typedef {Object} AvatarOptions
+ * @typedef {Object} Avatar
  * @property {string} avatar
  */
 
 /**
- * @typedef {Object} OfferOptions
+ * @typedef {Object} Offer
  * @property {string} title
  * @property {string} adress
  * @property {number} price
@@ -182,7 +203,7 @@ var getAdvertObject = function (index) {
  */
 
 /**
- * @typedef {Object} LocationOptions
+ * @typedef {Object} Location
  * @property {string} x
  * @property {string} y
  */
@@ -205,10 +226,15 @@ var createFeature = function (modifierName) {
  * @return {Node}
  */
 var createPhoto = function (photoLink) {
-  var photo = photoTemplate.cloneNode();
+  var photo = document.createElement('img');
+  photo.classList.add('popup__photo');
+  photo.width = photoAtributes.WIDTH;
+  photo.height = photoAtributes.HEIGHT;
+  photo.alt = photoAtributes.ALT;
   photo.src = photoLink;
   return photo;
 };
+
 
 /**
  * Отрисовка метки объявления
@@ -218,8 +244,8 @@ var createPhoto = function (photoLink) {
 var renderMapPin = function (element) {
   var pin = mapPin.cloneNode(true);
   var image = pin.querySelector('img');
-  var width = pinSizes.width;
-  var height = pinSizes.height;
+  var width = pinSizes.WIDTH;
+  var height = pinSizes.HEIGHT;
 
   pin.style.left = (element.location.x - width / 2) + 'px';
   pin.style.top = (element.location.y - height) + 'px';
@@ -254,14 +280,13 @@ var renderAdvertCard = function (element) {
   element.offer.photos.forEach(function (item) {
     cardElement.querySelector('.popup__photos').appendChild(createPhoto(item));
   });
-  cardPhotos.removeChild(cardPhotos.children[0]);
 
   return cardElement;
 };
 
 /**
  * Функция получения массива данных по объявлениям
- * @return {Array}
+ * @return {Array.<Advert>}
 */
 var getAdvertData = function () {
   var advertData = [];
@@ -274,20 +299,19 @@ var getAdvertData = function () {
 
 /**
  * Функция отрисовки меток объявлений
- * @param {Advert} element
+ * @param {Array.<Advert>} advertData
  * @return {Node}
 */
-var renderPinFragment = function (element) {
+var renderPinFragment = function (advertData) {
   var fragment = document.createDocumentFragment();
-  element.forEach(function (item) {
+  advertData.forEach(function (item) {
     fragment.appendChild(renderMapPin(item));
   });
   return fragment;
 };
 
-/**
- * Функция инициилизации карты объявлений
-*/
+
+// Функция инициилизации карты объявлений
 var initPage = function () {
   map.classList.remove('map--faded');
   var advertList = getAdvertData();
