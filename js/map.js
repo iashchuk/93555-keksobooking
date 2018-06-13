@@ -326,18 +326,12 @@ var renderPinFragment = function (advertData) {
 
 // --- НАЧАЛО КОДА [#15 Личный проект: подробности] ---  //
 
-// Функция инициилизации карты объявлений (обновленная)
-var initPage = function () {
-  var advertList = getAdvertData();
-  mapPins.appendChild(renderPinFragment(advertList));
-  mapPinMain.removeEventListener('mouseup', pageActive);
-};
-
-
 // Задаем новые переменные
 var form = document.querySelector('.ad-form');
 var fieldsets = form.querySelectorAll('fieldset');
-
+var mapPinMain = map.querySelector('.map__pin--main');
+var addressInput = form.querySelector('#address');
+var ESC_KEYCODE = 27;
 
 // Отключаем поля формы, добавляем атрибут disabled
 fieldsets.forEach(function (item) {
@@ -346,19 +340,17 @@ fieldsets.forEach(function (item) {
 
 
 // Активное состояние страницы
-var pageActive = function () {
+var activatePage = function () {
+  var advertList = getAdvertData();
+  mapPins.appendChild(renderPinFragment(advertList));
   map.classList.remove('map--faded');
   form.classList.remove('ad-form--disabled');
   fieldsets.forEach(function (item) {
     item.disabled = false;
   });
-  initPage();
+  mapPinMain.removeEventListener('mouseup', activatePage);
 };
 
-
-// Определяем переменные для заполнения поля адреса
-var mapPinMain = map.querySelector('.map__pin--main');
-var addressInput = form.querySelector('#address');
 
 // Получаем координаты адреса главного пина
 var getAddressValue = function (mainPin) {
@@ -370,8 +362,6 @@ var getAddressValue = function (mainPin) {
 
 addressInput.value = getAddressValue(mapPinMain);
 
-
-var ESC_KEYCODE = 27;
 
 // Определяем функции для закрытия карточки
 var closePopup = function () {
@@ -390,6 +380,5 @@ var onPopupEscPress = function (evt) {
 
 
 // При перетаскивании метки происходит активация страницы
-mapPinMain.addEventListener('mouseup', pageActive);
-
+mapPinMain.addEventListener('mouseup', activatePage);
 
