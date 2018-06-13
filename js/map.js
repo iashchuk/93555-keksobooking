@@ -95,6 +95,7 @@ var map = document.querySelector('.map');
 var mapPins = map.querySelector('.map__pins');
 var mapCard = document.querySelector('template').content.querySelector('.map__card');
 var mapPin = document.querySelector('template').content.querySelector('.map__pin');
+var mapContainer = map.querySelector('.map__filters-container');
 
 /**
  * Функция получения случайного элемента массива
@@ -251,6 +252,17 @@ var renderMapPin = function (element) {
   image.src = element.author.avatar;
   image.alt = element.offer.title;
 
+  pin.addEventListener('click', function () {
+
+    var mapOpenCard = map.querySelector('.map__card');
+    if (mapOpenCard) {
+      mapOpenCard.remove();
+    }
+
+    map.insertBefore(renderAdvertCard(element), mapContainer);
+    document.addEventListener('keydown', onPopupEscPress);
+  });
+
   return pin;
 };
 
@@ -261,6 +273,7 @@ var renderMapPin = function (element) {
  */
 var renderAdvertCard = function (element) {
   var cardElement = mapCard.cloneNode(true);
+  var closeCard = cardElement.querySelector('.popup__close');
 
   cardElement.querySelector('.popup__title').textContent = element.offer.title;
   cardElement.querySelector('.popup__text--address').textContent = element.offer.address;
@@ -278,6 +291,8 @@ var renderAdvertCard = function (element) {
   element.offer.photos.forEach(function (item) {
     cardElement.querySelector('.popup__photos').appendChild(createPhoto(item));
   });
+
+  closeCard.addEventListener('click', closePopup);
 
   return cardElement;
 };
@@ -309,14 +324,72 @@ var renderPinFragment = function (advertData) {
 };
 
 
-// Функция инициилизации карты объявлений
+// --- НАЧАЛО КОДА [#15 Личный проект: подробности] ---  //
+
+// Функция инициилизации карты объявлений (обновленная)
 var initPage = function () {
-  map.classList.remove('map--faded');
   var advertList = getAdvertData();
   mapPins.appendChild(renderPinFragment(advertList));
-  var advertCardRender = renderAdvertCard(advertList[0]);
-  map.insertBefore(advertCardRender, map.querySelector('.map__filters-container'));
+  mapPinMain.removeEventListener('mouseup', pageActive);
 };
 
 
-initPage();
+// Задаем новые переменные
+var form = document.querySelector('.ad-form');
+var fieldsets = form.querySelectorAll('fieldset');
+
+
+// Отключаем поля формы, добавляем атрибут disabled
+fieldsets.forEach(function (item) {
+  item.disabled = true;
+});
+
+
+// Активное состояние страницы
+var pageActive = function () {
+  map.classList.remove('map--faded');
+  form.classList.remove('ad-form--disabled');
+  fieldsets.forEach(function (item) {
+    item.disabled = false;
+  });
+  initPage();
+};
+
+
+// Определяем переменные для заполнения поля адреса
+var mapPinMain = map.querySelector('.map__pin--main');
+var addressInput = form.querySelector('#address');
+
+// Получаем координаты адреса главного пина
+var getAddressValue = function (mainPin) {
+  var x = parseInt(mainPin.style.left, 10) + pinSizes.WIDTH / 2;
+  var y = parseInt(mainPin.style.top, 10) + pinSizes.HEIGHT;
+
+  return x + ', ' + y;
+};
+
+addressInput.value = getAddressValue(mapPinMain);
+
+
+var ESC_KEYCODE = 27;
+
+// Определяем функции для закрытия карточки
+var closePopup = function () {
+  var mapOpenCard = map.querySelector('.map__card');
+  if (mapOpenCard) {
+    mapOpenCard.remove();
+  }
+  document.removeEventListener('keydown', onPopupEscPress);
+};
+
+var onPopupEscPress = function (evt) {
+  if (evt.keyCode === ESC_KEYCODE) {
+    closePopup();
+  }
+};
+
+
+// При перетаскивании метки происходит активация страницы
+mapPinMain.addEventListener('mouseup', pageActive);
+
+
