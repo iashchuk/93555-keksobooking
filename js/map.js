@@ -90,12 +90,17 @@ var offerTypesTranslation = {
 };
 
 var QUANTITY_PINS = 8;
+var ESC_KEYCODE = 27;
 
 var map = document.querySelector('.map');
 var mapPins = map.querySelector('.map__pins');
 var mapCard = document.querySelector('template').content.querySelector('.map__card');
 var mapPin = document.querySelector('template').content.querySelector('.map__pin');
 var mapContainer = map.querySelector('.map__filters-container');
+var form = document.querySelector('.ad-form');
+var fieldsets = form.querySelectorAll('fieldset');
+var mapPinMain = map.querySelector('.map__pin--main');
+var addressInput = form.querySelector('#address');
 
 /**
  * Функция получения случайного элемента массива
@@ -253,14 +258,10 @@ var renderMapPin = function (element) {
   image.alt = element.offer.title;
 
   pin.addEventListener('click', function () {
-
-    var mapOpenCard = map.querySelector('.map__card');
-    if (mapOpenCard) {
-      mapOpenCard.remove();
-    }
-
+    closeActiveHandler();
+    pin.classList.add('map__pin--active');
     map.insertBefore(renderAdvertCard(element), mapContainer);
-    document.addEventListener('keydown', onPopupEscPress);
+    document.addEventListener('keydown', cardEscPressClose);
   });
 
   return pin;
@@ -292,7 +293,7 @@ var renderAdvertCard = function (element) {
     cardElement.querySelector('.popup__photos').appendChild(createPhoto(item));
   });
 
-  closeCard.addEventListener('click', closePopup);
+  closeCard.addEventListener('click', closeActiveHandler);
 
   return cardElement;
 };
@@ -323,23 +324,27 @@ var renderPinFragment = function (advertData) {
   return fragment;
 };
 
+/**
+ * Получаем координаты главного пина
+ * @return {Location}
+ */
+var getMainPinPosition = function () {
+  var mainPinPosition = {
+    x: mapPinMain.offsetLeft + pinSizes.WIDTH / 2,
+    y: mapPinMain.offsetTop + pinSizes.HEIGHT / 2
+  };
+  return mainPinPosition;
+};
 
-// --- НАЧАЛО КОДА [#15 Личный проект: подробности] ---  //
+/**
+ * Записываем полученные координаты в инпут
+ * @param {Location} position
+ */
+var getAddressValue = function (position) {
+  addressInput.value = position.x + ', ' + position.y;
+};
 
-// Задаем новые переменные
-var form = document.querySelector('.ad-form');
-var fieldsets = form.querySelectorAll('fieldset');
-var mapPinMain = map.querySelector('.map__pin--main');
-var addressInput = form.querySelector('#address');
-var ESC_KEYCODE = 27;
-
-// Отключаем поля формы, добавляем атрибут disabled
-fieldsets.forEach(function (item) {
-  item.disabled = true;
-});
-
-
-// Активное состояние страницы
+// Перевод страницы в активное состояние
 var activatePage = function () {
   var advertList = getAdvertData();
   mapPins.appendChild(renderPinFragment(advertList));
@@ -348,37 +353,36 @@ var activatePage = function () {
   fieldsets.forEach(function (item) {
     item.disabled = false;
   });
+  getAddressValue(getMainPinPosition());
   mapPinMain.removeEventListener('mouseup', activatePage);
 };
 
-
-// Получаем координаты адреса главного пина
-var getAddressValue = function (mainPin) {
-  var x = parseInt(mainPin.style.left, 10) + pinSizes.WIDTH / 2;
-  var y = parseInt(mainPin.style.top, 10) + pinSizes.HEIGHT;
-
-  return x + ', ' + y;
-};
-
-addressInput.value = getAddressValue(mapPinMain);
-
-
-// Определяем функции для закрытия карточки
-var closePopup = function () {
+// Закрытие карточки и снятие выделения активного пина
+var closeActiveHandler = function () {
   var mapOpenCard = map.querySelector('.map__card');
+  var mapPinActive = map.querySelector('.map__pin--active');
+
   if (mapOpenCard) {
     mapOpenCard.remove();
+    mapPinActive.classList.remove('map__pin--active');
   }
-  document.removeEventListener('keydown', onPopupEscPress);
 };
 
-var onPopupEscPress = function (evt) {
+// Закрытие карточки и снятие выделения активного пина при нажатии кнопки ESC
+var cardEscPressClose = function (evt) {
   if (evt.keyCode === ESC_KEYCODE) {
-    closePopup();
+    closeActiveHandler();
   }
+  document.remove.addEventListener('keydown', cardEscPressClose);
+};
+
+// Функция инициализации страницы
+var initPage = function () {
+  fieldsets.forEach(function (item) {
+    item.disabled = true;
+  });
+  mapPinMain.addEventListener('mouseup', activatePage);
 };
 
 
-// При перетаскивании метки происходит активация страницы
-mapPinMain.addEventListener('mouseup', activatePage);
-
+initPage();
