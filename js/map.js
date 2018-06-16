@@ -89,7 +89,14 @@ var offerTypesTranslation = {
   bungalo: 'Бунгало'
 };
 
+/**
+ * @constant {number}
+ */
 var QUANTITY_PINS = 8;
+
+/**
+ * @constant {number}
+ */
 var ESC_KEYCODE = 27;
 
 var map = document.querySelector('.map');
