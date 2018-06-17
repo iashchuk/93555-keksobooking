@@ -108,6 +108,7 @@ var form = document.querySelector('.ad-form');
 var fieldsets = form.querySelectorAll('fieldset');
 var mapPinMain = map.querySelector('.map__pin--main');
 var addressInput = form.querySelector('#address');
+var activePin;
 
 /**
  * Функция получения случайного элемента массива
@@ -265,10 +266,8 @@ var renderMapPin = function (element) {
   image.alt = element.offer.title;
 
   pin.addEventListener('click', function () {
-    closeActiveHandler();
-    pin.classList.add('map__pin--active');
-    map.insertBefore(renderAdvertCard(element), mapContainer);
-    document.addEventListener('keydown', cardEscPressClose);
+    openCard(element);
+    activatePin(pin);
   });
 
   return pin;
@@ -300,7 +299,12 @@ var renderAdvertCard = function (element) {
     cardElement.querySelector('.popup__photos').appendChild(createPhoto(item));
   });
 
-  closeCard.addEventListener('click', closeActiveHandler);
+  closeCard.addEventListener('click', function () {
+    closeActiveCard();
+    removeActivePin();
+  });
+
+  document.addEventListener('keydown', onCardEscPress);
 
   return cardElement;
 };
@@ -364,24 +368,50 @@ var activatePage = function () {
   mapPinMain.removeEventListener('mouseup', activatePage);
 };
 
-// Закрытие карточки и снятие выделения активного пина
-var closeActiveHandler = function () {
-  var mapOpenCard = map.querySelector('.map__card');
-  var mapPinActive = map.querySelector('.map__pin--active');
+/**
+ * Функция открытия карточки
+ * @param {Advert} element
+ */
+var openCard = function (element) {
+  closeActiveCard();
+  map.insertBefore(renderAdvertCard(element), mapContainer);
 
+};
+
+// Функция закрытия активной карточки
+var closeActiveCard = function () {
+  var mapOpenCard = map.querySelector('.map__card');
   if (mapOpenCard) {
     mapOpenCard.remove();
-    mapPinActive.classList.remove('map__pin--active');
   }
 };
 
-// Закрытие карточки и снятие выделения активного пина при нажатии кнопки ESC
-var cardEscPressClose = function (evt) {
+// При нажатии кнопки ESC: закрытие карточки и снятие выделения активного пина
+var onCardEscPress = function (evt) {
   if (evt.keyCode === ESC_KEYCODE) {
-    closeActiveHandler();
+    closeActiveCard();
+    removeActivePin();
   }
-  document.remove.addEventListener('keydown', cardEscPressClose);
+  document.remove.addEventListener('keydown', onCardEscPress);
 };
+
+/**
+ * Функция выделения активного пина
+ * @param {Node} pinElement
+ */
+var activatePin = function (pinElement) {
+  removeActivePin();
+  activePin = pinElement;
+  activePin.classList.add('map__pin--active');
+};
+
+// Снятие выделения активного пина
+var removeActivePin = function () {
+  if (activePin) {
+    activePin.classList.remove('map__pin--active');
+  }
+};
+
 
 // Функция инициализации страницы
 var initPage = function () {
