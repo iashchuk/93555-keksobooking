@@ -70,6 +70,11 @@ var pinSizes = {
   HEIGHT: 44
 };
 
+var mainPinSizes = {
+  WIDTH: 65,
+  HEIGHT: 84
+};
+
 var photoAtributes = {
   WIDTH: 45,
   HEIGHT: 40,
@@ -89,12 +94,27 @@ var offerTypesTranslation = {
   bungalo: 'Бунгало'
 };
 
+/**
+ * @constant {number}
+ */
 var QUANTITY_PINS = 8;
+
+/**
+ * @constant {number}
+ */
+var ESC_KEYCODE = 27;
 
 var map = document.querySelector('.map');
 var mapPins = map.querySelector('.map__pins');
 var mapCard = document.querySelector('template').content.querySelector('.map__card');
 var mapPin = document.querySelector('template').content.querySelector('.map__pin');
+var mapContainer = map.querySelector('.map__filters-container');
+var form = document.querySelector('.ad-form');
+var fieldsets = form.querySelectorAll('fieldset');
+var mapPinMain = map.querySelector('.map__pin--main');
+var addressInput = form.querySelector('#address');
+var activePin;
+var activeCard;
 
 /**
  * Функция получения случайного элемента массива
@@ -251,6 +271,11 @@ var renderMapPin = function (element) {
   image.src = element.author.avatar;
   image.alt = element.offer.title;
 
+  pin.addEventListener('click', function () {
+    openCard(element);
+    activatePin(pin);
+  });
+
   return pin;
 };
 
@@ -261,6 +286,7 @@ var renderMapPin = function (element) {
  */
 var renderAdvertCard = function (element) {
   var cardElement = mapCard.cloneNode(true);
+  var closeCard = cardElement.querySelector('.popup__close');
 
   cardElement.querySelector('.popup__title').textContent = element.offer.title;
   cardElement.querySelector('.popup__text--address').textContent = element.offer.address;
@@ -278,6 +304,13 @@ var renderAdvertCard = function (element) {
   element.offer.photos.forEach(function (item) {
     cardElement.querySelector('.popup__photos').appendChild(createPhoto(item));
   });
+
+  closeCard.addEventListener('click', function () {
+    closeActiveCard();
+    removeActivePin();
+  });
+
+  document.addEventListener('keydown', onCardEscPress);
 
   return cardElement;
 };
@@ -308,14 +341,88 @@ var renderPinFragment = function (advertData) {
   return fragment;
 };
 
+/**
+ * Получаем координаты главного пина
+ * @return {Location}
+ */
+var getMainPinPosition = function () {
+  var mainPinPosition = {
+    x: mapPinMain.offsetLeft + mainPinSizes.WIDTH / 2,
+    y: mapPinMain.offsetTop + mainPinSizes.HEIGHT
+  };
+  return mainPinPosition;
+};
 
-// Функция инициилизации карты объявлений
-var initPage = function () {
-  map.classList.remove('map--faded');
+/**
+ * Записываем полученные координаты в инпут
+ * @param {Location} position
+ */
+var getAddressValue = function (position) {
+  addressInput.value = position.x + ', ' + position.y;
+};
+
+// Перевод страницы в активное состояние
+var activatePage = function () {
   var advertList = getAdvertData();
   mapPins.appendChild(renderPinFragment(advertList));
-  var advertCardRender = renderAdvertCard(advertList[0]);
-  map.insertBefore(advertCardRender, map.querySelector('.map__filters-container'));
+  map.classList.remove('map--faded');
+  form.classList.remove('ad-form--disabled');
+  fieldsets.forEach(function (item) {
+    item.disabled = false;
+  });
+  getAddressValue(getMainPinPosition());
+  mapPinMain.removeEventListener('mouseup', activatePage);
+};
+
+/**
+ * Функция открытия карточки
+ * @param {Advert} element
+ */
+var openCard = function (element) {
+  closeActiveCard();
+  activeCard = map.insertBefore(renderAdvertCard(element), mapContainer);
+};
+
+// Функция закрытия активной карточки
+var closeActiveCard = function () {
+  if (activeCard) {
+    activeCard.remove();
+  }
+};
+
+// При нажатии кнопки ESC: закрытие карточки и снятие выделения активного пина
+var onCardEscPress = function (evt) {
+  if (evt.keyCode === ESC_KEYCODE) {
+    closeActiveCard();
+    removeActivePin();
+  }
+  document.remove.addEventListener('keydown', onCardEscPress);
+};
+
+/**
+ * Функция выделения активного пина
+ * @param {Node} pinElement
+ */
+var activatePin = function (pinElement) {
+  removeActivePin();
+  activePin = pinElement;
+  activePin.classList.add('map__pin--active');
+};
+
+// Снятие выделения активного пина
+var removeActivePin = function () {
+  if (activePin) {
+    activePin.classList.remove('map__pin--active');
+  }
+};
+
+
+// Функция инициализации страницы
+var initPage = function () {
+  fieldsets.forEach(function (item) {
+    item.disabled = true;
+  });
+  mapPinMain.addEventListener('mouseup', activatePage);
 };
 
 
