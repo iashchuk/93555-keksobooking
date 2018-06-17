@@ -70,6 +70,11 @@ var pinSizes = {
   HEIGHT: 44
 };
 
+var mainPinSizes = {
+  WIDTH: 65,
+  HEIGHT: 84
+};
+
 var photoAtributes = {
   WIDTH: 45,
   HEIGHT: 40,
@@ -109,6 +114,7 @@ var fieldsets = form.querySelectorAll('fieldset');
 var mapPinMain = map.querySelector('.map__pin--main');
 var addressInput = form.querySelector('#address');
 var activePin;
+var activeCard;
 
 /**
  * Функция получения случайного элемента массива
@@ -341,8 +347,8 @@ var renderPinFragment = function (advertData) {
  */
 var getMainPinPosition = function () {
   var mainPinPosition = {
-    x: mapPinMain.offsetLeft + pinSizes.WIDTH / 2,
-    y: mapPinMain.offsetTop + pinSizes.HEIGHT / 2
+    x: mapPinMain.offsetLeft + mainPinSizes.WIDTH / 2,
+    y: mapPinMain.offsetTop + mainPinSizes.HEIGHT
   };
   return mainPinPosition;
 };
@@ -374,15 +380,13 @@ var activatePage = function () {
  */
 var openCard = function (element) {
   closeActiveCard();
-  map.insertBefore(renderAdvertCard(element), mapContainer);
-
+  activeCard = map.insertBefore(renderAdvertCard(element), mapContainer);
 };
 
 // Функция закрытия активной карточки
 var closeActiveCard = function () {
-  var mapOpenCard = map.querySelector('.map__card');
-  if (mapOpenCard) {
-    mapOpenCard.remove();
+  if (activeCard) {
+    activeCard.remove();
   }
 };
 
