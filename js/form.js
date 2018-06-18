@@ -46,13 +46,9 @@ var onRoomInputChange = function () {
   var selectedValue = RoomGuests[room];
 
   optionGuests.forEach(function (option) {
-    if (selectedValue.includes(option.value)) {
-      option.disabled = false;
-    } else {
-      option.selected = false;
-      option.disabled = true;
-    }
+    option.disabled = !selectedValue.includes(option.value);
   });
+  inputGuests.value = selectedValue.includes(inputGuests.value) ? inputGuests.value : selectedValue[0];
 };
 
 /**
@@ -89,6 +85,7 @@ var clearForm = function () {
     input.classList.remove('invalid-field');
   });
   form.reset();
+  window.deactivatePage();
 };
 
 titleInput.addEventListener('change', onInputCheckValidity);
@@ -101,10 +98,6 @@ inputTimeOut.addEventListener('change', function () {
   onTimeInputChange(inputTimeIn, inputTimeOut.value);
 });
 inputRooms.addEventListener('change', onRoomInputChange);
-inputGuests.addEventListener('click', onRoomInputChange);
 formReset.addEventListener('click', function () {
   clearForm();
 });
-form.addEventListener('invalid', function (evt) {
-  markInvalidInput(evt.target);
-}, true);
