@@ -75,6 +75,11 @@ var mainPinSizes = {
   HEIGHT: 84
 };
 
+var mainPinStartCoords = {
+  x: '570px',
+  y: '375px'
+};
+
 var photoAtributes = {
   WIDTH: 45,
   HEIGHT: 40,
@@ -115,6 +120,7 @@ var mapPinMain = map.querySelector('.map__pin--main');
 var addressInput = form.querySelector('#address');
 var activePin;
 var activeCard;
+var mapPinList = [];
 
 /**
  * Функция получения случайного элемента массива
@@ -254,7 +260,6 @@ var createPhoto = function (photoLink) {
   return photo;
 };
 
-
 /**
  * Отрисовка метки объявления
  * @param {Advert} element
@@ -275,6 +280,8 @@ var renderMapPin = function (element) {
     openCard(element);
     activatePin(pin);
   });
+
+  mapPinList.push(pin);
 
   return pin;
 };
@@ -372,6 +379,36 @@ var activatePage = function () {
   });
   getAddressValue(getMainPinPosition());
   mapPinMain.removeEventListener('mouseup', activatePage);
+  window.onRoomInputChange();
+
+  form.addEventListener('invalid', function (evt) {
+    window.markInvalidInput(evt.target);
+  }, true);
+};
+
+// Перевод страницы в неактивное состояние
+window.deactivatePage = function () {
+  map.classList.add('map--faded');
+  form.classList.add('ad-form--disabled');
+  fieldsets.forEach(function (item) {
+    item.disabled = true;
+  });
+
+  mapPinMain.style.left = mainPinStartCoords.x;
+  mapPinMain.style.top = mainPinStartCoords.y;
+
+  getAddressValue(getMainPinPosition());
+
+  if (openCard) {
+    closeActiveCard();
+  }
+
+
+  mapPinList.forEach(function (item) {
+    mapPins.removeChild(item);
+  });
+  mapPinList = [];
+  mapPinMain.addEventListener('mouseup', activatePage);
 };
 
 /**
@@ -423,6 +460,7 @@ var initPage = function () {
     item.disabled = true;
   });
   mapPinMain.addEventListener('mouseup', activatePage);
+  window.inputGuests.onRoomInputChange();
 };
 
 
