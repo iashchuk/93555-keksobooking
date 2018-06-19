@@ -354,7 +354,7 @@ var renderPinFragment = function (advertData) {
  */
 var getMainPinPosition = function () {
   var mainPinPosition = {
-    x: mapPinMain.offsetLeft + mainPinSizes.WIDTH / 2,
+    x: mapPinMain.offsetLeft + Math.floor(mainPinSizes.WIDTH / 2),
     y: mapPinMain.offsetTop + mainPinSizes.HEIGHT
   };
   return mainPinPosition;
@@ -368,48 +368,6 @@ var getAddressValue = function (position) {
   addressInput.value = position.x + ', ' + position.y;
 };
 
-// Перевод страницы в активное состояние
-var activatePage = function () {
-  var advertList = getAdvertData();
-  mapPins.appendChild(renderPinFragment(advertList));
-  map.classList.remove('map--faded');
-  form.classList.remove('ad-form--disabled');
-  fieldsets.forEach(function (item) {
-    item.disabled = false;
-  });
-  getAddressValue(getMainPinPosition());
-  mapPinMain.removeEventListener('mouseup', activatePage);
-  window.onRoomInputChange();
-
-  form.addEventListener('invalid', function (evt) {
-    window.markInvalidInput(evt.target);
-  }, true);
-};
-
-// Перевод страницы в неактивное состояние
-window.deactivatePage = function () {
-  map.classList.add('map--faded');
-  form.classList.add('ad-form--disabled');
-  fieldsets.forEach(function (item) {
-    item.disabled = true;
-  });
-
-  mapPinMain.style.left = mainPinStartCoords.x;
-  mapPinMain.style.top = mainPinStartCoords.y;
-
-  getAddressValue(getMainPinPosition());
-
-  if (openCard) {
-    closeActiveCard();
-  }
-
-
-  mapPinList.forEach(function (item) {
-    mapPins.removeChild(item);
-  });
-  mapPinList = [];
-  mapPinMain.addEventListener('mouseup', activatePage);
-};
 
 /**
  * Функция открытия карточки
@@ -454,14 +412,44 @@ var removeActivePin = function () {
 };
 
 
-// Функция инициализации страницы
-var initPage = function () {
+// Перевод страницы в активное состояние
+var activatePage = function () {
+  var advertList = getAdvertData();
+  mapPins.appendChild(renderPinFragment(advertList));
+  map.classList.remove('map--faded');
+  form.classList.remove('ad-form--disabled');
+  fieldsets.forEach(function (item) {
+    item.disabled = false;
+  });
+  getAddressValue(getMainPinPosition());
+  mapPinMain.removeEventListener('mousedown', activatePage);
+  window.onRoomInputChange();
+
+  form.addEventListener('invalid', function (evt) {
+    window.markInvalidInput(evt.target);
+  }, true);
+};
+
+// Перевод страницы в неактивное состояние
+window.deactivatePage = function () {
+  map.classList.add('map--faded');
+  form.classList.add('ad-form--disabled');
   fieldsets.forEach(function (item) {
     item.disabled = true;
   });
-  mapPinMain.addEventListener('mouseup', activatePage);
-  window.inputGuests.onRoomInputChange();
+
+  mapPinMain.style.left = mainPinStartCoords.x;
+  mapPinMain.style.top = mainPinStartCoords.y;
+
+  getAddressValue(getMainPinPosition());
+
+  if (openCard) {
+    closeActiveCard();
+  }
+
+  mapPinList.forEach(function (item) {
+    mapPins.removeChild(item);
+  });
+  mapPinList = [];
+  mapPinMain.addEventListener('mousedown', activatePage);
 };
-
-
-initPage();
