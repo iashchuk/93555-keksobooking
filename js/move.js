@@ -42,8 +42,8 @@ var initPage = function () {
         window.mapPinMain.style.top = window.mapPinMain.offsetTop - shift.y + 'px';
       }
       if (
-        mainPinCoords.x - shift.x >= dragLimit.x.MIN + window.mainPinSizes.WIDTH / 2 &&
-        mainPinCoords.x - shift.x <= window.mapPins.offsetWidth - window.mainPinSizes.WIDTH / 2
+        mainPinCoords.x - shift.x >= dragLimit.x.MIN &&
+        mainPinCoords.x - shift.x <= window.mapPins.offsetWidth
       ) {
         window.mapPinMain.style.left = window.mapPinMain.offsetLeft - shift.x + 'px';
       }

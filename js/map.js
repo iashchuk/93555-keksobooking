@@ -354,7 +354,7 @@ var renderPinFragment = function (advertData) {
  */
 var getMainPinPosition = function () {
   var mainPinPosition = {
-    x: mapPinMain.offsetLeft + mainPinSizes.WIDTH / 2,
+    x: mapPinMain.offsetLeft + Math.floor(mainPinSizes.WIDTH / 2),
     y: mapPinMain.offsetTop + mainPinSizes.HEIGHT
   };
   return mainPinPosition;
