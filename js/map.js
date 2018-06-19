@@ -422,7 +422,7 @@ var activatePage = function () {
     item.disabled = false;
   });
   getAddressValue(getMainPinPosition());
-  mapPinMain.removeEventListener('mouseup', activatePage);
+  mapPinMain.removeEventListener('mousedown', activatePage);
   window.onRoomInputChange();
 
   form.addEventListener('invalid', function (evt) {
@@ -451,5 +451,5 @@ window.deactivatePage = function () {
     mapPins.removeChild(item);
   });
   mapPinList = [];
-  mapPinMain.addEventListener('mouseup', activatePage);
+  mapPinMain.addEventListener('mousedown', activatePage);
 };
