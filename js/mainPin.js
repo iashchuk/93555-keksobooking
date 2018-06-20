@@ -4,7 +4,8 @@
 
   var dragLimit = {
     x: {
-      MIN: 0
+      MIN: 0,
+      MAX: 1200
     },
     y: {
       MIN: 130,
@@ -24,11 +25,10 @@
 
 
   var mapPinMain = document.querySelector('.map__pin--main');
-  var mapPins = document.querySelector('.map__pins');
-  var addressInput = document.querySelector('#address');
+
 
   // Получение координат главного пина по-умолчанию
-  var mainPinDefaultPosition = function () {
+  var getMainPinDefaultPosition = function () {
     mapPinMain.style.left = mainPinStartCoords.x;
     mapPinMain.style.top = mainPinStartCoords.y;
   };
@@ -46,13 +46,13 @@
     return mainPinPosition;
   };
 
-    /**
-   * Записываем полученные координаты в инпут
-   * @param {Location} position
-   */
-  var getAddressValue = function (position) {
-    addressInput.value = position.x + ', ' + position.y;
-  };
+  //   /**
+  //  * Записываем полученные координаты в инпут
+  //  * @param {Location} position
+  //  */
+  // var getAddressValue = function (position) {
+  //   addressInput.value = position.x + ', ' + position.y;
+  // };
 
 
   // Функция инициализации страницы
@@ -67,10 +67,12 @@
 
       var onMouseMove = function (moveEvt) {
         moveEvt.preventDefault();
+
         var shift = {
           x: startCoords.x - moveEvt.clientX,
           y: startCoords.y - moveEvt.clientY
         };
+
         startCoords = {
           x: moveEvt.clientX,
           y: moveEvt.clientY
@@ -86,11 +88,11 @@
         }
         if (
           mainPinCoords.x - shift.x >= dragLimit.x.MIN &&
-          mainPinCoords.x - shift.x <= mapPins.offsetWidth
+          mainPinCoords.x - shift.x <= dragLimit.x.MAX
         ) {
           mapPinMain.style.left = mapPinMain.offsetLeft - shift.x + 'px';
         }
-        getAddressValue(mainPinCoords);
+        window.form.getAddressValue(mainPinCoords);
       };
 
       var onMouseUp = function (upEvt) {
@@ -108,10 +110,9 @@
 
   dragPin();
 
-  window.drag = {
-    mainPinDefaultPosition: mainPinDefaultPosition,
-    getMainPinPosition: getMainPinPosition,
-    getAddressValue: getAddressValue
+  window.mainPin = {
+    getDefaultPosition: getMainPinDefaultPosition,
+    getPosition: getMainPinPosition
   };
 
 })();

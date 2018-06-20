@@ -13,6 +13,7 @@
   var optionGuests = inputGuests.querySelectorAll('option');
   var formReset = form.querySelector('.ad-form__reset');
   var fieldsets = form.querySelectorAll('fieldset');
+  var addressInput = document.querySelector('#address');
 
   var TypePrice = {
     'bungalo': 0,
@@ -29,6 +30,14 @@
   };
 
   var invalidInputs = [];
+
+  /**
+   * Записываем полученные координаты в инпут
+   * @param {Location} position
+   */
+  var getAddressValue = function (position) {
+    addressInput.value = position.x + ', ' + position.y;
+  };
 
   // Функция установки минимальных цен в зависимости от типа дома
   var onTypeInputChange = function () {
@@ -87,7 +96,7 @@
     });
     form.reset();
     deactivateForm();
-    window.map.deactivatePage();
+    window.map.deactivate();
   };
 
   var deactivateForm = function () {
@@ -111,7 +120,7 @@
     clearForm();
   });
 
-  var init = function () {
+  var initForm = function () {
     form.classList.remove('ad-form--disabled');
     fieldsets.forEach(function (item) {
       item.disabled = false;
@@ -126,7 +135,8 @@
 
 
   window.form = {
-    init: init
+    init: initForm,
+    getAddressValue: getAddressValue
   };
 
 })();

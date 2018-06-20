@@ -53,8 +53,8 @@
 
 
   window.pin = {
-    renderMapPin: renderMapPin,
-    removeActivePin: removeActivePin
+    render: renderMapPin,
+    remove: removeActivePin
   };
 
 })();

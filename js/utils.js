@@ -38,7 +38,7 @@
   };
 
 
-  window.util = {
+  window.utils = {
     getRandomElement: getRandomElement,
     getRandomInRange: getRandomInRange,
     shuffleElements: shuffleElements

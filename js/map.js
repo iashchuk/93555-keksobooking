@@ -7,6 +7,23 @@
   var mapPinMain = map.querySelector('.map__pin--main');
   var mapPinList = [];
 
+  /**
+ * @constant {number}
+ */
+  var QUANTITY_PINS = 8;
+
+  /**
+   * Функция получения массива данных по объявлениям
+   * @return {Array.<Advert>}
+  */
+  var getAdvertData = function () {
+    var advertData = [];
+
+    for (var i = 0; i < QUANTITY_PINS; i++) {
+      advertData.push(window.data.getAdvert(i));
+    }
+    return advertData;
+  };
 
   /**
    * Функция отрисовки меток объявлений
@@ -16,7 +33,7 @@
   var renderPinFragment = function (advertData) {
     var fragment = document.createDocumentFragment();
     advertData.forEach(function (item) {
-      var pin = window.pin.renderMapPin(item);
+      var pin = window.pin.render(item);
       fragment.appendChild(pin);
       mapPinList.push(pin);
     });
@@ -24,40 +41,37 @@
   };
 
 
-  // Перевод страницы в активное состояние
-  var activatePage = function () {
-    mapPins.appendChild(renderPinFragment(window.data.getAdvertData()));
+  // Перевод карты в активное состояние
+  var activateMap = function () {
+    mapPins.appendChild(renderPinFragment(getAdvertData()));
     map.classList.remove('map--faded');
     window.form.init();
-    var pinPosition = window.drag.getMainPinPosition();
-    window.drag.getAddressValue(pinPosition);
-    mapPinMain.removeEventListener('mousedown', activatePage);
+    var pinPosition = window.mainPin.getPosition();
+    window.form.getAddressValue(pinPosition);
+    mapPinMain.removeEventListener('mousedown', activateMap);
   };
 
 
-  // Перевод страницы в неактивное состояние
-  var deactivatePage = function () {
+  // Перевод карты в неактивное состояние
+  var deactivateMap = function () {
     map.classList.add('map--faded');
-    window.drag.mainPinDefaultPosition();
+    window.mainPin.getDefaultPosition();
     window.card.closeActive();
     mapPinList.forEach(function (item) {
       mapPins.removeChild(item);
     });
     mapPinList = [];
-    mapPinMain.addEventListener('mousedown', activatePage);
+    mapPinMain.addEventListener('mousedown', activateMap);
   };
 
-
-  // Функция инициализации страницы
-  var initPage = function () {
-    deactivatePage();
-    mapPinMain.addEventListener('mouseup', activatePage);
+  var initMap = function () {
+    mapPinMain.addEventListener('mousedown', activateMap);
   };
 
-  initPage();
+  initMap();
 
   window.map = {
-    deactivatePage: deactivatePage
+    deactivate: deactivateMap
   };
 
 })();

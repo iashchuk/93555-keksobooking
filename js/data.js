@@ -72,11 +72,6 @@
     EXTENSION: '.png'
   };
 
-  /**
- * @constant {number}
- */
-  var QUANTITY_PINS = 8;
-
 
   /**
    * Функция получения ссылки на аватар
@@ -88,41 +83,7 @@
     return avatarOptions.PATH + index + avatarOptions.EXTENSION;
   };
 
-  /**
-   * Функция генерации данных для объявления
-   * @param {number} index
-   * @return {Advert}
-   */
-  var getAdvertObject = function (index) {
-    var locationX = window.util.getRandomInRange(locationOptions.x.START, locationOptions.y.FINISH);
-    var locationY = window.util.getRandomInRange(locationOptions.x.START, locationOptions.y.FINISH);
-
-    var advertObject = {
-      author: {
-        avatar: getAvatarLink(index + 1)
-      },
-      offer: {
-        title: offerOptions.TITLES[index],
-        address: locationX + ', ' + locationY,
-        price: window.util.getRandomInRange(offerOptions.prices.MIN, offerOptions.prices.MAX),
-        type: window.util.getRandomElement(offerOptions.TYPES),
-        rooms: window.util.getRandomInRange(offerOptions.rooms.MIN, offerOptions.rooms.MAX),
-        guests: window.util.getRandomInRange(offerOptions.guests.MIN, offerOptions.guests.MAX),
-        checkin: window.util.getRandomElement(offerOptions.TIMES),
-        checkout: window.util.getRandomElement(offerOptions.TIMES),
-        features: window.util.shuffleElements(offerOptions.FEATURES).slice(window.util.getRandomInRange(0, offerOptions.FEATURES.length)),
-        description: '',
-        photos: window.util.shuffleElements(offerOptions.PHOTOS)
-      },
-      location: {
-        x: locationX,
-        y: locationY
-      }
-    };
-    return advertObject;
-  };
-
-  /**
+    /**
    * @typedef {Object} Advert
    * @property {Avatar}
    * @property {Offer}
@@ -155,20 +116,42 @@
    */
 
   /**
-   * Функция получения массива данных по объявлениям
-   * @return {Array.<Advert>}
-  */
-  var getAdvertData = function () {
-    var advertData = [];
+   * Функция генерации данных для объявления
+   * @param {number} index
+   * @return {Advert}
+   */
+  var getAdvert = function (index) {
+    var locationX = window.utils.getRandomInRange(locationOptions.x.START, locationOptions.y.FINISH);
+    var locationY = window.utils.getRandomInRange(locationOptions.x.START, locationOptions.y.FINISH);
 
-    for (var i = 0; i < QUANTITY_PINS; i++) {
-      advertData.push(getAdvertObject(i));
-    }
-    return advertData;
+    var advert = {
+      author: {
+        avatar: getAvatarLink(index + 1)
+      },
+      offer: {
+        title: offerOptions.TITLES[index],
+        address: locationX + ', ' + locationY,
+        price: window.utils.getRandomInRange(offerOptions.prices.MIN, offerOptions.prices.MAX),
+        type: window.utils.getRandomElement(offerOptions.TYPES),
+        rooms: window.utils.getRandomInRange(offerOptions.rooms.MIN, offerOptions.rooms.MAX),
+        guests: window.utils.getRandomInRange(offerOptions.guests.MIN, offerOptions.guests.MAX),
+        checkin: window.utils.getRandomElement(offerOptions.TIMES),
+        checkout: window.utils.getRandomElement(offerOptions.TIMES),
+        features: window.utils.shuffleElements(offerOptions.FEATURES).slice(window.utils.getRandomInRange(0, offerOptions.FEATURES.length)),
+        description: '',
+        photos: window.utils.shuffleElements(offerOptions.PHOTOS)
+      },
+      location: {
+        x: locationX,
+        y: locationY
+      }
+    };
+    return advert;
   };
 
+
   window.data = {
-    getAdvertData: getAdvertData
+    getAdvert: getAdvert
   };
 
 })();

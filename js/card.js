@@ -57,7 +57,7 @@
    * @param {Advert} element
    * @return {Node}
    */
-  var renderAdvertCard = function (element) {
+  var renderCard = function (element) {
     var cardElement = mapCard.cloneNode(true);
     var closeCard = cardElement.querySelector('.popup__close');
 
@@ -79,8 +79,8 @@
     });
 
     closeCard.addEventListener('click', function () {
-      closeActive();
-      window.pin.removeActivePin();
+      closeActiveCard();
+      window.pin.remove();
     });
 
     document.addEventListener('keydown', onCardEscPress);
@@ -92,14 +92,14 @@
    * Функция открытия карточки
    * @param {Advert} element
    */
-  var open = function (element) {
-    closeActive();
-    activeCard = map.insertBefore(renderAdvertCard(element), mapContainer);
+  var openCard = function (element) {
+    closeActiveCard();
+    activeCard = map.insertBefore(renderCard(element), mapContainer);
   };
 
 
   // Функция закрытия активной карточки
-  var closeActive = function () {
+  var closeActiveCard = function () {
     if (activeCard) {
       activeCard.remove();
     }
@@ -108,15 +108,15 @@
   // При нажатии кнопки ESC: закрытие карточки и снятие выделения активного пина
   var onCardEscPress = function (evt) {
     if (evt.keyCode === ESC_KEYCODE) {
-      closeActive();
-      window.pin.removeActivePin();
+      closeActiveCard();
+      window.pin.remove();
     }
     document.remove.addEventListener('keydown', onCardEscPress);
   };
 
   window.card = {
-    open: open,
-    closeActive: closeActive
+    open: openCard,
+    closeActive: closeActiveCard
   };
 
 })();
