@@ -106,7 +106,7 @@
   };
 
 
- dragPin();
+  dragPin();
 
   window.drag = {
     mainPinDefaultPosition: mainPinDefaultPosition,
