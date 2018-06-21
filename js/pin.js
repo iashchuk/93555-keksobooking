@@ -15,13 +15,13 @@
    * @param {Node} pinElement
    */
   var activatePin = function (pinElement) {
-    removeActivePin();
+    deactivatePin();
     activePin = pinElement;
     activePin.classList.add('map__pin--active');
   };
 
   // Снятие выделения активного пина
-  var removeActivePin = function () {
+  var deactivatePin = function () {
     if (activePin) {
       activePin.classList.remove('map__pin--active');
     }
@@ -32,7 +32,7 @@
    * @param {Advert} element
    * @return {Node}
    */
-  var renderMapPin = function (element) {
+  var renderPin = function (element) {
     var pin = mapPin.cloneNode(true);
     var image = pin.querySelector('img');
     var width = pinSizes.WIDTH;
@@ -53,8 +53,8 @@
 
 
   window.pin = {
-    render: renderMapPin,
-    remove: removeActivePin
+    render: renderPin,
+    deactivate: deactivatePin
   };
 
 })();

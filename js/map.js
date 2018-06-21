@@ -20,7 +20,7 @@
     var advertData = [];
 
     for (var i = 0; i < QUANTITY_PINS; i++) {
-      advertData.push(window.data.getAdvert(i));
+      advertData.push(window.getData(i));
     }
     return advertData;
   };
@@ -47,7 +47,7 @@
     map.classList.remove('map--faded');
     window.form.init();
     var pinPosition = window.mainPin.getPosition();
-    window.form.getAddressValue(pinPosition);
+    window.form.setAddress(pinPosition);
     mapPinMain.removeEventListener('mousedown', activateMap);
   };
 
@@ -56,7 +56,7 @@
   var deactivateMap = function () {
     map.classList.add('map--faded');
     window.mainPin.getDefaultPosition();
-    window.card.closeActive();
+    window.card.deactivate();
     mapPinList.forEach(function (item) {
       mapPins.removeChild(item);
     });

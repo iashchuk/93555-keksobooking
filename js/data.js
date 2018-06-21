@@ -120,11 +120,11 @@
    * @param {number} index
    * @return {Advert}
    */
-  var getAdvert = function (index) {
+  window.getData = function (index) {
     var locationX = window.utils.getRandomInRange(locationOptions.x.START, locationOptions.y.FINISH);
     var locationY = window.utils.getRandomInRange(locationOptions.x.START, locationOptions.y.FINISH);
 
-    var advert = {
+    return {
       author: {
         avatar: getAvatarLink(index + 1)
       },
@@ -146,12 +146,6 @@
         y: locationY
       }
     };
-    return advert;
-  };
-
-
-  window.data = {
-    getAdvert: getAdvert
   };
 
 })();

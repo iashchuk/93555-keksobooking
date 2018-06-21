@@ -80,7 +80,7 @@
 
     closeCard.addEventListener('click', function () {
       closeActiveCard();
-      window.pin.remove();
+      window.pin.deactivate();
     });
 
     document.addEventListener('keydown', onCardEscPress);
@@ -116,7 +116,7 @@
 
   window.card = {
     open: openCard,
-    closeActive: closeActiveCard
+    deactivate: closeActiveCard
   };
 
 })();

@@ -46,15 +46,6 @@
     return mainPinPosition;
   };
 
-  //   /**
-  //  * Записываем полученные координаты в инпут
-  //  * @param {Location} position
-  //  */
-  // var getAddressValue = function (position) {
-  //   addressInput.value = position.x + ', ' + position.y;
-  // };
-
-
   // Функция инициализации страницы
   var dragPin = function () {
 
@@ -92,7 +83,7 @@
         ) {
           mapPinMain.style.left = mapPinMain.offsetLeft - shift.x + 'px';
         }
-        window.form.getAddressValue(mainPinCoords);
+        window.form.setAddress(mainPinCoords);
       };
 
       var onMouseUp = function (upEvt) {

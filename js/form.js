@@ -35,7 +35,7 @@
    * Записываем полученные координаты в инпут
    * @param {Location} position
    */
-  var getAddressValue = function (position) {
+  var setAddress = function (position) {
     addressInput.value = position.x + ', ' + position.y;
   };
 
@@ -136,7 +136,7 @@
 
   window.form = {
     init: initForm,
-    getAddressValue: getAddressValue
+    setAddress: setAddress
   };
 
 })();
