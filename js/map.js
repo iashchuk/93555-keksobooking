@@ -7,43 +7,29 @@
   var mapPinMain = map.querySelector('.map__pin--main');
   var mapPinList = [];
 
-  /**
- * @constant {number}
- */
-  var QUANTITY_PINS = 8;
-
-  /**
-   * Функция получения массива данных по объявлениям
-   * @return {Array.<Advert>}
-  */
-  var getAdvertData = function () {
-    var advertData = [];
-
-    for (var i = 0; i < QUANTITY_PINS; i++) {
-      advertData.push(window.getData(i));
-    }
-    return advertData;
-  };
 
   /**
    * Функция отрисовки меток объявлений
    * @param {Array.<Advert>} advertData
-   * @return {Node}
-  */
-  var renderPinFragment = function (advertData) {
+   */
+  var onLoadSuccess = function (advertData) {
     var fragment = document.createDocumentFragment();
     advertData.forEach(function (item) {
       var pin = window.pin.render(item);
       fragment.appendChild(pin);
       mapPinList.push(pin);
     });
-    return fragment;
+    mapPins.appendChild(fragment);
+  };
+
+  var onLoadError = function (textMessage) {
+    window.errorMessage.create(textMessage);
   };
 
 
   // Перевод карты в активное состояние
   var activateMap = function () {
-    mapPins.appendChild(renderPinFragment(getAdvertData()));
+    window.backend.load(onLoadSuccess, onLoadError);
     map.classList.remove('map--faded');
     window.form.init();
     var pinPosition = window.mainPin.getPosition();
@@ -65,6 +51,7 @@
   };
 
   var initMap = function () {
+    window.form.deactivate();
     mapPinMain.addEventListener('mousedown', activateMap);
   };
 
