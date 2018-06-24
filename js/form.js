@@ -109,7 +109,7 @@
   };
 
   // Обработчик успешной отправки формы
-  var successHandler = function () {
+  var onSubmitFormSuccess = function () {
     clearForm();
     success.classList.remove('hidden');
     document.addEventListener('click', onSuccessMessageClick);
@@ -117,7 +117,7 @@
   };
 
   // Обработчик при возникновении ошибки
-  var errorHandler = function (textMessage) {
+  var onSubmitFormError = function (textMessage) {
     window.errorMessage.create(textMessage);
   };
 
@@ -142,7 +142,7 @@
 
   // Действия при нажатии кнопки отправить
   var onFormSubmit = function (evt) {
-    window.backend.upload(new FormData(form), successHandler, errorHandler);
+    window.backend.upload(new FormData(form), onSubmitFormSuccess, onSubmitFormError);
     evt.preventDefault();
   };
 

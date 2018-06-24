@@ -7,6 +7,11 @@
     UPLOAD: 'https://js.dump.academy/keksobooking'
   };
 
+  var requestTimeout = {
+    LOAD: 10000,
+    UPLOAD: 5000
+  };
+
   var load = function (onLoad, onError) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
@@ -26,7 +31,7 @@
       onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
     });
 
-    xhr.timeout = 3000;
+    xhr.timeout = requestTimeout.LOAD;
 
     xhr.open('GET', urlType.LOAD);
     xhr.send();
@@ -47,7 +52,7 @@
       onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
     });
 
-    xhr.timeout = 5000;
+    xhr.timeout = requestTimeout.ULPOAD;
 
 
     xhr.open('POST', urlType.UPLOAD);
