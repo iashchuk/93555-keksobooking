@@ -25,7 +25,7 @@
     }
   };
 
-  var setupXMLHttpRequest = function (onLoad, onError, url, method, timeout, data) {
+  var setupXHR = function (onLoad, onError, url, method, timeout, data) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
 
@@ -57,11 +57,11 @@
   };
 
   var load = function (onLoad, onError) {
-    setupXMLHttpRequest(onLoad, onError, requestData.url.LOAD, requestData.METHODS[0], requestData.timeout.LOAD);
+    setupXHR(onLoad, onError, requestData.url.LOAD, requestData.METHODS[0], requestData.timeout.LOAD);
   };
 
   var upload = function (onLoad, onError, data) {
-    setupXMLHttpRequest(onLoad, onError, requestData.url.UPLOAD, requestData.METHODS[1], requestData.timeout.UPLOAD, data);
+    setupXHR(onLoad, onError, requestData.url.UPLOAD, requestData.METHODS[1], requestData.timeout.UPLOAD, data);
   };
 
   window.backend = {
