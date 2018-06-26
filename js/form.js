@@ -13,7 +13,8 @@
   var optionGuests = inputGuests.querySelectorAll('option');
   var formReset = form.querySelector('.ad-form__reset');
   var fieldsets = form.querySelectorAll('fieldset');
-  var addressInput = document.querySelector('#address');
+  var addressInput = form.querySelector('#address');
+  var success = document.querySelector('.success');
 
   var TypePrice = {
     'bungalo': 0,
@@ -32,6 +33,11 @@
   var invalidInputs = [];
 
   /**
+   * @constant {number}
+   */
+  var ESC_KEYCODE = 27;
+
+  /**
    * Записываем полученные координаты в инпут
    * @param {Location} position
    */
@@ -46,9 +52,18 @@
   };
 
   // Функция синхронного изменение времени заезда и выезда
-  var onTimeInputChange = function (input, value) {
+  var setTime = function (input, value) {
     input.value = value;
   };
+
+  var onTimeOutInputChange = function () {
+    setTime(inputTimeIn, inputTimeOut.value);
+  };
+
+  var onTimeInInputChange = function () {
+    setTime(inputTimeOut, inputTimeIn.value);
+  };
+
 
   // Функция установки количества комнат, взависимости от числа гостей
   var onRoomInputChange = function () {
@@ -70,6 +85,10 @@
     input.classList.add('invalid-field');
   };
 
+  var onFormInvalid = function (evt) {
+    markInvalidInput(evt.target);
+  };
+
   /**
    * Функция снятия выделения с неправильно заполенных полей
    * @param {Node} input
@@ -89,7 +108,89 @@
     }
   };
 
-  // Функция очистки формы
+  // Обработчик успешной отправки формы
+  var onSubmitFormSuccess = function () {
+    clearForm();
+    success.classList.remove('hidden');
+    document.addEventListener('click', onSuccessMessageClick);
+    document.addEventListener('keydown', onSuccessMessageEscPress);
+  };
+
+  // Обработчик при возникновении ошибки
+  var onSubmitFormError = function (textMessage) {
+    window.errorMessage.create(textMessage);
+  };
+
+  // Действия при закрытии сообщения об успешной отправки формы
+  var closeSuccessMessage = function () {
+    success.classList.add('hidden');
+    document.removeEventListener('click', onSuccessMessageClick);
+    document.removeEventListener('keydown', onSuccessMessageEscPress);
+  };
+
+  // Клик по сообщению об успешной отправки формы
+  var onSuccessMessageClick = function () {
+    closeSuccessMessage();
+  };
+
+  // Нажатие клавиши ESC при открытом сообщении об успешной отправки формы
+  var onSuccessMessageEscPress = function (evt) {
+    if (evt.keyCode === ESC_KEYCODE) {
+      closeSuccessMessage();
+    }
+  };
+
+  // Действия при нажатии кнопки отправить
+  var onFormSubmit = function (evt) {
+    window.backend.upload(new FormData(form), onSubmitFormSuccess, onSubmitFormError);
+    evt.preventDefault();
+  };
+
+
+  var addFormHandlers = function () {
+    titleInput.addEventListener('change', onInputCheckValidity);
+    inputType.addEventListener('change', onTypeInputChange);
+    inputPrice.addEventListener('change', onInputCheckValidity);
+    inputTimeIn.addEventListener('change', onTimeInInputChange);
+    inputTimeOut.addEventListener('change', onTimeOutInputChange);
+    inputRooms.addEventListener('change', onRoomInputChange);
+    formReset.addEventListener('click', clearForm);
+    form.addEventListener('invalid', onFormInvalid, true);
+    form.addEventListener('submit', onFormSubmit);
+  };
+
+  var removeFormHandlers = function () {
+    titleInput.removeEventListener('change', onInputCheckValidity);
+    inputType.removeEventListener('change', onTypeInputChange);
+    inputPrice.removeEventListener('change', onInputCheckValidity);
+    inputTimeIn.removeEventListener('change', onTimeInInputChange);
+    inputTimeOut.removeEventListener('change', onTimeOutInputChange);
+    inputRooms.removeEventListener('change', onRoomInputChange);
+    formReset.removeEventListener('click', clearForm);
+    form.removeEventListener('invalid', onFormInvalid, true);
+    form.removeEventListener('submit', onFormSubmit);
+  };
+
+  // Функция активации формы
+  var initForm = function () {
+    form.classList.remove('ad-form--disabled');
+    fieldsets.forEach(function (item) {
+      item.disabled = false;
+    });
+    onRoomInputChange();
+    addFormHandlers();
+  };
+
+  // Функция деактивации формы
+  var deactivateForm = function () {
+    form.classList.add('ad-form--disabled');
+    fieldsets.forEach(function (item) {
+      item.disabled = true;
+    });
+    removeFormHandlers();
+  };
+
+    // Функция очистки формы
   var clearForm = function () {
     invalidInputs.forEach(function (input) {
       input.classList.remove('invalid-field');
@@ -99,43 +200,9 @@
     window.map.deactivate();
   };
 
-  var deactivateForm = function () {
-    form.classList.add('ad-form--disabled');
-    fieldsets.forEach(function (item) {
-      item.disabled = true;
-    });
-  };
-
-  titleInput.addEventListener('change', onInputCheckValidity);
-  inputType.addEventListener('change', onTypeInputChange);
-  inputPrice.addEventListener('change', onInputCheckValidity);
-  inputTimeIn.addEventListener('change', function () {
-    onTimeInputChange(inputTimeOut, inputTimeIn.value);
-  });
-  inputTimeOut.addEventListener('change', function () {
-    onTimeInputChange(inputTimeIn, inputTimeOut.value);
-  });
-  inputRooms.addEventListener('change', onRoomInputChange);
-  formReset.addEventListener('click', function () {
-    clearForm();
-  });
-
-  var initForm = function () {
-    form.classList.remove('ad-form--disabled');
-    fieldsets.forEach(function (item) {
-      item.disabled = false;
-    });
-    onRoomInputChange();
-
-    form.addEventListener('invalid', function (evt) {
-      markInvalidInput(evt.target);
-    }, true);
-
-  };
-
-
   window.form = {
     init: initForm,
+    deactivate: deactivateForm,
     setAddress: setAddress
   };
 
