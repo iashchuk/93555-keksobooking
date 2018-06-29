@@ -37,7 +37,6 @@
     return arrayElements;
   };
 
-
   window.utils = {
     getRandomElement: getRandomElement,
     getRandomInRange: getRandomInRange,
