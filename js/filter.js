@@ -1,6 +1,10 @@
 'use strict';
 
 (function () {
+
+  /**
+   * @constant {number}
+   */
   var SHOW_ADS = 5;
 
   var priceRange = {
@@ -26,13 +30,23 @@
   var filteredAds = [];
 
 
+  /**
+   * Фильтрация пр типу жилья
+   * @param {Advert} element
+   * @return {boolean}
+   */
   var onFilterTypeChange = function (element) {
     if (type[type.selectedIndex].value === 'any') {
-      return element;
+      return true;
     }
     return element.offer.type === type[type.selectedIndex].value;
   };
 
+  /**
+   * Фильтрация по цене жилья
+   * @param {Advert} element
+   * @return {boolean}
+   */
   var onFilterPriceChange = function (element) {
     switch (price[price.selectedIndex].value) {
       case 'low':
@@ -42,24 +56,39 @@
       case 'high':
         return element.offer.price > priceRange.high.MIN;
       default:
-        return element;
+        return true;
     }
   };
 
+  /**
+   * Фильтрация по числу комнат
+   * @param {Advert} element
+   * @return {boolean}
+   */
   var onFilterRoomsChange = function (element) {
     if (rooms[rooms.selectedIndex].value === 'any') {
-      return element;
+      return true;
     }
     return element.offer.rooms === parseInt(rooms[rooms.selectedIndex].value, 10);
   };
 
+  /**
+   * Фильтрация по числу гостей
+   * @param {Advert} element
+   * @return {boolean}
+   */
   var onFilterGuestChange = function (element) {
     if (guests[guests.selectedIndex].value === 'any') {
-      return element;
+      return true;
     }
     return element.offer.guests === parseInt(guests[guests.selectedIndex].value, 10);
   };
 
+  /**
+   * Фильтрация по наличию удобств
+   * @param {Advert} element
+   * @return {boolean}
+   */
   var onFilterFeaturesChange = function (element) {
     var isFeature = true;
 
@@ -75,7 +104,7 @@
     return isFeature;
   };
 
-
+  // Фильтрация объявлений
   var filterAdverts = function () {
     filteredAds = loadAds.slice(0);
     filteredAds = filteredAds.filter(onFilterTypeChange)

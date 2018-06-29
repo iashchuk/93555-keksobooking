@@ -39,7 +39,7 @@
     });
 
     xhr.addEventListener('timeout', function () {
-      onError(requestData.message.ERROR_TIMEOUT + xhr.timeout + 'мс');
+      onError(requestData.message.ERROR_TIMEOUT + xhr.timeout + ' мс');
     });
 
     xhr.timeout = timeout;
