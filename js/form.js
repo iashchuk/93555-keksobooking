@@ -2,6 +2,11 @@
 
 (function () {
 
+  /**
+   * @constant {number}
+   */
+  var ESC_KEYCODE = 27;
+
   var form = document.querySelector('.ad-form');
   var titleInput = form.querySelector('#title');
   var inputType = form.querySelector('#type');
@@ -31,11 +36,6 @@
   };
 
   var invalidInputs = [];
-
-  /**
-   * @constant {number}
-   */
-  var ESC_KEYCODE = 27;
 
   /**
    * Записываем полученные координаты в инпут
