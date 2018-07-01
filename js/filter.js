@@ -7,17 +7,12 @@
    */
   var SHOW_ADS = 5;
 
-  var priceRange = {
-    low: {
-      MAX: 10000
-    },
-    middle: {
-      MIN: 10000,
-      MAX: 50000
-    },
-    high: {
-      MIN: 50000
-    }
+  /**
+   * @enum {number}
+   */
+  var Price = {
+    START_RANGE: 10000,
+    FINISH_RANGE: 50000
   };
 
   var filter = document.querySelector('.map__filters');
@@ -29,59 +24,39 @@
   var loadAds = [];
   var filteredAds = [];
 
-
-  /**
-   * Фильтрация пр типу жилья
-   * @param {Advert} element
-   * @return {boolean}
-   */
-  var onFilterTypeChange = function (element) {
-    if (type[type.selectedIndex].value === 'any') {
+  var PriceRange = {
+    'any': function () {
       return true;
+    },
+    'low': function (value) {
+      return value < Price.START_RANGE;
+    },
+    'middle': function (value) {
+      return value >= Price.START_RANGE && value <= Price.FINISH_RANGE;
+    },
+    'high': function (value) {
+      return value > Price.FINISH_RANGE;
     }
-    return element.offer.type === type[type.selectedIndex].value;
   };
 
-  /**
-   * Фильтрация по цене жилья
-   * @param {Advert} element
-   * @return {boolean}
-   */
-  var onFilterPriceChange = function (element) {
-    switch (price[price.selectedIndex].value) {
-      case 'low':
-        return element.offer.price < priceRange.low.MAX;
-      case 'middle':
-        return element.offer.price >= priceRange.middle.MIN && element.offer.price <= priceRange.middle.MAX;
-      case 'high':
-        return element.offer.price > priceRange.high.MIN;
-      default:
+  /** Фильтрация по цене / типу жилья / числу комнат / числу гостей
+    * @param {Node} select
+    * @param {string} property
+    * @return {boolean}
+    */
+  var onFilterSelectChange = function (select, property) {
+    return function (element) {
+      if (select[select.selectedIndex].value === 'any') {
         return true;
-    }
-  };
-
-  /**
-   * Фильтрация по числу комнат
-   * @param {Advert} element
-   * @return {boolean}
-   */
-  var onFilterRoomsChange = function (element) {
-    if (rooms[rooms.selectedIndex].value === 'any') {
-      return true;
-    }
-    return element.offer.rooms === parseInt(rooms[rooms.selectedIndex].value, 10);
-  };
-
-  /**
-   * Фильтрация по числу гостей
-   * @param {Advert} element
-   * @return {boolean}
-   */
-  var onFilterGuestChange = function (element) {
-    if (guests[guests.selectedIndex].value === 'any') {
-      return true;
-    }
-    return element.offer.guests === parseInt(guests[guests.selectedIndex].value, 10);
+      }
+      if (property === 'type') {
+        return element.offer[property] === select[select.selectedIndex].value;
+      }
+      if (property === 'price') {
+        return PriceRange[select[select.selectedIndex].value](element.offer[property]);
+      }
+      return element.offer[property] === parseInt(select[select.selectedIndex].value, 10);
+    };
   };
 
   /**
@@ -92,12 +67,8 @@
   var onFilterFeaturesChange = function (element) {
     var isFeature = true;
 
-    var checkedFeatures = Array.from(features).filter(function (item) {
-      return item.checked;
-    });
-
-    checkedFeatures.forEach(function (item) {
-      if (element.offer.features.indexOf(item.value) < 0) {
+    features.forEach(function (item) {
+      if (item.checked && element.offer.features.indexOf(item.value) < 0) {
         isFeature = false;
       }
     });
@@ -107,27 +78,27 @@
   // Фильтрация объявлений
   var filterAdverts = function () {
     filteredAds = loadAds.slice(0);
-    filteredAds = filteredAds.filter(onFilterTypeChange)
-                             .filter(onFilterPriceChange)
-                             .filter(onFilterRoomsChange)
-                             .filter(onFilterGuestChange)
-                             .filter(onFilterFeaturesChange);
+    filteredAds = filteredAds.filter(onFilterSelectChange(type, 'type'));
+    filteredAds = filteredAds.filter(onFilterSelectChange(rooms, 'rooms'));
+    filteredAds = filteredAds.filter(onFilterSelectChange(guests, 'guests'));
+    filteredAds = filteredAds.filter(onFilterSelectChange(price, 'price'));
+    filteredAds = filteredAds.filter(onFilterFeaturesChange);
   };
 
-  var setFilters = function () {
+  var setFilters = window.debounce(function () {
     filterAdverts();
     window.card.deactivate();
     window.map.remove();
     window.map.create(filteredAds.slice(0, SHOW_ADS));
-  };
+  });
 
 
   var setFilterHandlers = function () {
-    filter.addEventListener('change', window.debounce(setFilters));
+    filter.addEventListener('change', setFilters);
   };
 
   var removeFilterHandlers = function () {
-    filter.removeEventListener('change', window.debounce(setFilters));
+    filter.removeEventListener('change', setFilters);
   };
 
   var activateFilter = function (data) {
