@@ -2,13 +2,12 @@
 
 (function () {
 
-  var mapPin = document.querySelector('template').content.querySelector('.map__pin');
-  var activePin;
-
   var pinSizes = {
     WIDTH: 40,
     HEIGHT: 44
   };
+  var mapPin = document.querySelector('template').content.querySelector('.map__pin');
+  var activePin;
 
   /**
    * Функция выделения активного пина

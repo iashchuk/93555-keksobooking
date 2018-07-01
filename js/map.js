@@ -3,17 +3,13 @@
 (function () {
 
   var map = document.querySelector('.map');
-  var mapPins = map.querySelector('.map__pins');
   var mapPinMain = map.querySelector('.map__pin--main');
+  var mapPins = map.querySelector('.map__pins');
+  var fragment = document.createDocumentFragment();
   var mapPinList = [];
 
 
-  /**
-   * Функция отрисовки меток объявлений
-   * @param {Array.<Advert>} advertData
-   */
-  var onLoadSuccess = function (advertData) {
-    var fragment = document.createDocumentFragment();
+  var createMapPins = function (advertData) {
     advertData.forEach(function (item) {
       var pin = window.pin.render(item);
       fragment.appendChild(pin);
@@ -21,6 +17,22 @@
     });
     mapPins.appendChild(fragment);
   };
+
+  var removeMapPins = function () {
+    mapPinList.forEach(function (item) {
+      mapPins.removeChild(item);
+    });
+    mapPinList = [];
+  };
+
+  /**
+   * Функция отрисовки меток объявлений
+   * @param {Array.<Advert>} advertData
+   */
+  var onLoadSuccess = function (advertData) {
+    createMapPins(window.filter.activate(advertData));
+  };
+
 
   var onLoadError = function (textMessage) {
     window.errorMessage.create(textMessage);
@@ -43,10 +55,8 @@
     map.classList.add('map--faded');
     window.mainPin.getDefaultPosition();
     window.card.deactivate();
-    mapPinList.forEach(function (item) {
-      mapPins.removeChild(item);
-    });
-    mapPinList = [];
+    window.filter.deactivate();
+    removeMapPins();
     mapPinMain.addEventListener('mousedown', activateMap);
   };
 
@@ -58,7 +68,9 @@
   initMap();
 
   window.map = {
-    deactivate: deactivateMap
+    deactivate: deactivateMap,
+    create: createMapPins,
+    remove: removeMapPins
   };
 
 })();

@@ -2,15 +2,16 @@
 
 (function () {
 
+  /**
+   * @constant {number}
+   */
+  var ESC_KEYCODE = 27;
+
   var mapCard = document.querySelector('template').content.querySelector('.map__card');
   var map = document.querySelector('.map');
   var mapContainer = map.querySelector('.map__filters-container');
   var activeCard;
 
-  /**
-   * @constant {number}
-   */
-  var ESC_KEYCODE = 27;
 
   var offerTypesTranslation = {
     flat: 'Квартира',

@@ -3,10 +3,6 @@
 (function () {
 
   var requestData = {
-    METHODS: [
-      'GET',
-      'POST'
-    ],
     url: {
       LOAD: 'https://js.dump.academy/keksobooking/data',
       UPLOAD: 'https://js.dump.academy/keksobooking'
@@ -25,6 +21,7 @@
     }
   };
 
+
   var setupXHR = function (onLoad, onError, url, method, timeout, data) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
@@ -42,7 +39,7 @@
     });
 
     xhr.addEventListener('timeout', function () {
-      onError(requestData.message.ERROR_TIMEOUT + xhr.timeout + 'мс');
+      onError(requestData.message.ERROR_TIMEOUT + xhr.timeout + ' мс');
     });
 
     xhr.timeout = timeout;
@@ -57,11 +54,11 @@
   };
 
   var load = function (onLoad, onError) {
-    setupXHR(onLoad, onError, requestData.url.LOAD, requestData.METHODS[0], requestData.timeout.LOAD);
+    setupXHR(onLoad, onError, requestData.url.LOAD, 'GET', requestData.timeout.LOAD);
   };
 
   var upload = function (onLoad, onError, data) {
-    setupXHR(onLoad, onError, requestData.url.UPLOAD, requestData.METHODS[1], requestData.timeout.UPLOAD, data);
+    setupXHR(onLoad, onError, requestData.url.UPLOAD, 'POST', requestData.timeout.UPLOAD, data);
   };
 
   window.backend = {
