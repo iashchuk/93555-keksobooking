@@ -39,7 +39,7 @@
     }
   };
 
-  /** Фильтрация по цене / типу жилья / числу комнат / числу гостей
+  /** Фильтрация по типу жилья / числу комнат / числу гостей
     * @param {Node} select
     * @param {string} property
     * @return {boolean}
@@ -49,14 +49,19 @@
       if (select[select.selectedIndex].value === 'any') {
         return true;
       }
-      if (property === 'type') {
-        return element.offer[property] === select[select.selectedIndex].value;
-      }
-      if (property === 'price') {
-        return PriceRange[select[select.selectedIndex].value](element.offer[property]);
-      }
-      return element.offer[property] === parseInt(select[select.selectedIndex].value, 10);
+      return element.offer[property].toString() === select[select.selectedIndex].value;
     };
+  };
+
+    /** Фильтрация по цене
+    * @param {Node} element
+    * @return {boolean}
+    */
+  var onFilterPriceChange = function (element) {
+    if (price[price.selectedIndex].value === 'any') {
+      return true;
+    }
+    return PriceRange[price[price.selectedIndex].value](element.offer.price);
   };
 
   /**
@@ -81,7 +86,7 @@
     filteredAds = filteredAds.filter(onFilterSelectChange(type, 'type'));
     filteredAds = filteredAds.filter(onFilterSelectChange(rooms, 'rooms'));
     filteredAds = filteredAds.filter(onFilterSelectChange(guests, 'guests'));
-    filteredAds = filteredAds.filter(onFilterSelectChange(price, 'price'));
+    filteredAds = filteredAds.filter(onFilterPriceChange);
     filteredAds = filteredAds.filter(onFilterFeaturesChange);
   };
 
