@@ -7,19 +7,26 @@
    */
   var ESC_KEYCODE = 27;
 
+  var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
+
   var form = document.querySelector('.ad-form');
   var titleInput = form.querySelector('#title');
-  var inputType = form.querySelector('#type');
-  var inputPrice = form.querySelector('#price');
-  var inputTimeIn = form.querySelector('#timein');
-  var inputTimeOut = form.querySelector('#timeout');
-  var inputRooms = form.querySelector('#room_number');
-  var inputGuests = form.querySelector('#capacity');
-  var optionGuests = inputGuests.querySelectorAll('option');
+  var typeInput = form.querySelector('#type');
+  var priceInput = form.querySelector('#price');
+  var timeInInput = form.querySelector('#timein');
+  var timeOutInput = form.querySelector('#timeout');
+  var roomsInput = form.querySelector('#room_number');
+  var guestsInput = form.querySelector('#capacity');
+  var optionGuests = guestsInput.querySelectorAll('option');
   var formReset = form.querySelector('.ad-form__reset');
   var fieldsets = form.querySelectorAll('fieldset');
   var addressInput = form.querySelector('#address');
   var success = document.querySelector('.success');
+  var avatar = form.querySelector('.ad-form-header__preview img');
+  var avatarInput = form.querySelector('#avatar');
+  var photoInput = form.querySelector('#images');
+  var photo = form.querySelector('.ad-form__photo');
+  var photoContainer = form.querySelector('.ad-form__photo-container');
 
   var TypePrice = {
     'bungalo': 0,
@@ -35,6 +42,13 @@
     '100': ['0']
   };
 
+  var PhotoParams = {
+    WIDTH: '70',
+    HEIGHT: '70',
+    BORDER_RADIUS: '5px',
+    MARGIN_RIGHT: '10px'
+  };
+
   var invalidInputs = [];
 
   /**
@@ -47,8 +61,8 @@
 
   // Функция установки минимальных цен в зависимости от типа дома
   var onTypeInputChange = function () {
-    inputPrice.min = TypePrice[inputType.value];
-    inputPrice.placeholder = TypePrice[inputType.value];
+    priceInput.min = TypePrice[typeInput.value];
+    priceInput.placeholder = TypePrice[typeInput.value];
   };
 
   // Функция синхронного изменение времени заезда и выезда
@@ -57,23 +71,23 @@
   };
 
   var onTimeOutInputChange = function () {
-    setTime(inputTimeIn, inputTimeOut.value);
+    setTime(timeInInput, timeOutInput.value);
   };
 
   var onTimeInInputChange = function () {
-    setTime(inputTimeOut, inputTimeIn.value);
+    setTime(timeOutInput, timeInInput.value);
   };
 
 
   // Функция установки количества комнат, взависимости от числа гостей
   var onRoomInputChange = function () {
-    var room = inputRooms[inputRooms.selectedIndex].value;
+    var room = roomsInput[roomsInput.selectedIndex].value;
     var selectedValue = RoomGuests[room];
 
     optionGuests.forEach(function (option) {
       option.disabled = !selectedValue.includes(option.value);
     });
-    inputGuests.value = selectedValue.includes(inputGuests.value) ? inputGuests.value : selectedValue[0];
+    guestsInput.value = selectedValue.includes(guestsInput.value) ? guestsInput.value : selectedValue[0];
   };
 
   /**
@@ -149,26 +163,30 @@
 
   var addFormHandlers = function () {
     titleInput.addEventListener('change', onInputCheckValidity);
-    inputType.addEventListener('change', onTypeInputChange);
-    inputPrice.addEventListener('change', onInputCheckValidity);
-    inputTimeIn.addEventListener('change', onTimeInInputChange);
-    inputTimeOut.addEventListener('change', onTimeOutInputChange);
-    inputRooms.addEventListener('change', onRoomInputChange);
+    typeInput.addEventListener('change', onTypeInputChange);
+    priceInput.addEventListener('change', onInputCheckValidity);
+    timeInInput.addEventListener('change', onTimeInInputChange);
+    timeOutInput.addEventListener('change', onTimeOutInputChange);
+    roomsInput.addEventListener('change', onRoomInputChange);
     formReset.addEventListener('click', clearForm);
     form.addEventListener('invalid', onFormInvalid, true);
     form.addEventListener('submit', onFormSubmit);
+    avatarInput.addEventListener('change', onAvatarChange);
+    photoInput.addEventListener('change', onPhotoChange);
   };
 
   var removeFormHandlers = function () {
     titleInput.removeEventListener('change', onInputCheckValidity);
-    inputType.removeEventListener('change', onTypeInputChange);
-    inputPrice.removeEventListener('change', onInputCheckValidity);
-    inputTimeIn.removeEventListener('change', onTimeInInputChange);
-    inputTimeOut.removeEventListener('change', onTimeOutInputChange);
-    inputRooms.removeEventListener('change', onRoomInputChange);
+    typeInput.removeEventListener('change', onTypeInputChange);
+    priceInput.removeEventListener('change', onInputCheckValidity);
+    timeInInput.removeEventListener('change', onTimeInInputChange);
+    timeOutInput.removeEventListener('change', onTimeOutInputChange);
+    roomsInput.removeEventListener('change', onRoomInputChange);
     formReset.removeEventListener('click', clearForm);
     form.removeEventListener('invalid', onFormInvalid, true);
     form.removeEventListener('submit', onFormSubmit);
+    avatarInput.removeEventListener('change', onAvatarChange);
+    photoInput.removeEventListener('change', onPhotoChange);
   };
 
   // Функция активации формы
@@ -198,7 +216,78 @@
     form.reset();
     deactivateForm();
     window.map.deactivate();
+    removePhotos();
   };
+
+  /**
+   * Функция создания аватара для загрузки
+   * @param {string} value
+   */
+  var createAvatar = function (value) {
+    avatar.src = value;
+  };
+
+  /**
+   * Функция создания изображения для загрузки
+   * @param {string} value
+   */
+  var createImage = function (value) {
+    var image = document.createElement('img');
+    var newPhoto = document.createElement('div');
+    newPhoto.className = 'ad-form__photo';
+    newPhoto.classList.add('ad-form__photo--upload');
+    image.src = value;
+    image.width = PhotoParams.WIDTH;
+    image.height = PhotoParams.HEIGHT;
+    image.style.borderRadius = PhotoParams.BORDER_RADIUS;
+    newPhoto.appendChild(image);
+    photoContainer.insertBefore(newPhoto, photo);
+  };
+
+
+  /**
+   * Функция загрузки файлов
+   * @param {Node} formField
+   * @param {function} callback
+   */
+  var loadFile = function (formField, callback) {
+    var file = formField.files[0];
+    var fileName = file.name.toLowerCase();
+
+    var matches = FILE_TYPES.some(function (it) {
+      return fileName.endsWith(it);
+    });
+
+    if (matches) {
+      var reader = new FileReader();
+
+      reader.addEventListener('load', function () {
+        callback(reader.result);
+      });
+
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // Функция удаления фотографий из формы
+  var removePhotos = function () {
+    avatar.src = 'img/muffin-grey.svg';
+    var photoUpload = document.querySelectorAll('.ad-form__photo--upload');
+    if (photoUpload) {
+      photoUpload.forEach(function (item) {
+        item.parentNode.removeChild(item);
+      });
+    }
+  };
+
+  var onAvatarChange = function () {
+    loadFile(avatarInput, createAvatar);
+  };
+
+  var onPhotoChange = function () {
+    loadFile(photoInput, createImage);
+  };
+
 
   window.form = {
     init: initForm,
