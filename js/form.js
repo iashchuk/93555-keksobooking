@@ -7,8 +7,6 @@
    */
   var ESC_KEYCODE = 27;
 
-  var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
-
   var form = document.querySelector('.ad-form');
   var titleInput = form.querySelector('#title');
   var typeInput = form.querySelector('#type');
@@ -22,11 +20,6 @@
   var fieldsets = form.querySelectorAll('fieldset');
   var addressInput = form.querySelector('#address');
   var success = document.querySelector('.success');
-  var avatar = form.querySelector('.ad-form-header__preview img');
-  var avatarInput = form.querySelector('#avatar');
-  var photoInput = form.querySelector('#images');
-  var photo = form.querySelector('.ad-form__photo');
-  var photoContainer = form.querySelector('.ad-form__photo-container');
 
   var TypePrice = {
     'bungalo': 0,
@@ -40,13 +33,6 @@
     '2': ['1', '2'],
     '3': ['1', '2', '3'],
     '100': ['0']
-  };
-
-  var PhotoParams = {
-    WIDTH: '70',
-    HEIGHT: '70',
-    BORDER_RADIUS: '5px',
-    MARGIN_RIGHT: '10px'
   };
 
   var invalidInputs = [];
@@ -171,8 +157,7 @@
     formReset.addEventListener('click', clearForm);
     form.addEventListener('invalid', onFormInvalid, true);
     form.addEventListener('submit', onFormSubmit);
-    avatarInput.addEventListener('change', onAvatarChange);
-    photoInput.addEventListener('change', onPhotoChange);
+    window.formImage.addHandlers();
   };
 
   var removeFormHandlers = function () {
@@ -185,8 +170,7 @@
     formReset.removeEventListener('click', clearForm);
     form.removeEventListener('invalid', onFormInvalid, true);
     form.removeEventListener('submit', onFormSubmit);
-    avatarInput.removeEventListener('change', onAvatarChange);
-    photoInput.removeEventListener('change', onPhotoChange);
+    window.formImage.removeHandlers();
   };
 
   // Функция активации формы
@@ -216,78 +200,8 @@
     form.reset();
     deactivateForm();
     window.map.deactivate();
-    removePhotos();
+    window.formImage.remove();
   };
-
-  /**
-   * Функция создания аватара для загрузки
-   * @param {string} value
-   */
-  var createAvatar = function (value) {
-    avatar.src = value;
-  };
-
-  /**
-   * Функция создания изображения для загрузки
-   * @param {string} value
-   */
-  var createImage = function (value) {
-    var image = document.createElement('img');
-    var newPhoto = document.createElement('div');
-    newPhoto.className = 'ad-form__photo';
-    newPhoto.classList.add('ad-form__photo--upload');
-    image.src = value;
-    image.width = PhotoParams.WIDTH;
-    image.height = PhotoParams.HEIGHT;
-    image.style.borderRadius = PhotoParams.BORDER_RADIUS;
-    newPhoto.appendChild(image);
-    photoContainer.insertBefore(newPhoto, photo);
-  };
-
-
-  /**
-   * Функция загрузки файлов
-   * @param {Node} formField
-   * @param {function} callback
-   */
-  var loadFile = function (formField, callback) {
-    var file = formField.files[0];
-    var fileName = file.name.toLowerCase();
-
-    var matches = FILE_TYPES.some(function (it) {
-      return fileName.endsWith(it);
-    });
-
-    if (matches) {
-      var reader = new FileReader();
-
-      reader.addEventListener('load', function () {
-        callback(reader.result);
-      });
-
-      reader.readAsDataURL(file);
-    }
-  };
-
-  // Функция удаления фотографий из формы
-  var removePhotos = function () {
-    avatar.src = 'img/muffin-grey.svg';
-    var photoUpload = document.querySelectorAll('.ad-form__photo--upload');
-    if (photoUpload) {
-      photoUpload.forEach(function (item) {
-        item.parentNode.removeChild(item);
-      });
-    }
-  };
-
-  var onAvatarChange = function () {
-    loadFile(avatarInput, createAvatar);
-  };
-
-  var onPhotoChange = function () {
-    loadFile(photoInput, createImage);
-  };
-
 
   window.form = {
     init: initForm,
