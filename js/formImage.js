@@ -103,7 +103,7 @@
     loadFile(photoInput, createImage);
   };
 
-  var DropInput = {
+  var dropInput = {
     'ad-form-header__drop-zone': createAvatar,
     'ad-form__drop-zone': createImage
   };
@@ -126,7 +126,7 @@
   var dragDropHandler = function (evt) {
     evt.preventDefault();
     evt.target.style = dragHighlight.DEFAULT;
-    loadFile(evt.dataTransfer, DropInput[evt.target.className]);
+    loadFile(evt.dataTransfer, dropInput[evt.target.className]);
   };
 
 

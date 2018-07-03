@@ -28,7 +28,7 @@
     'palace': 10000
   };
 
-  var RoomGuests = {
+  var roomGuests = {
     '1': ['1'],
     '2': ['1', '2'],
     '3': ['1', '2', '3'],
@@ -68,7 +68,7 @@
   // Функция установки количества комнат, взависимости от числа гостей
   var onRoomInputChange = function () {
     var room = roomsInput[roomsInput.selectedIndex].value;
-    var selectedValue = RoomGuests[room];
+    var selectedValue = roomGuests[room];
 
     optionGuests.forEach(function (option) {
       option.disabled = !selectedValue.includes(option.value);
