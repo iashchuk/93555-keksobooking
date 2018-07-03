@@ -28,7 +28,6 @@
     DEFAULT: ''
   };
 
-
   /**
    * Функция создания аватара для загрузки
    * @param {string} value
@@ -54,6 +53,16 @@
     photoContainer.insertBefore(newPhoto, photo);
   };
 
+  /**
+   * Функция проверки типа загружаемого файла
+   * @param {Object} file
+   * @return {boolean}
+   */
+  var isCorrectType = function (file) {
+    return FILE_TYPES.some(function (it) {
+      return file.name.toLowerCase().endsWith(it);
+    });
+  };
 
   /**
    * Функция загрузки файлов
@@ -62,16 +71,9 @@
    */
   var loadFile = function (formField, callback) {
     var files = Array.from(formField.files);
+    var correctFiles = files.filter(isCorrectType);
 
-    var matches = function (file) {
-      return FILE_TYPES.some(function (it) {
-        return file.name.toLowerCase().endsWith(it);
-      });
-    };
-
-    var matchesFiles = files.filter(matches);
-
-    matchesFiles.forEach(function (item) {
+    correctFiles.forEach(function (item) {
       var reader = new FileReader();
 
       reader.addEventListener('load', function () {
@@ -100,9 +102,6 @@
   var onPhotoChange = function () {
     loadFile(photoInput, createImage);
   };
-
-
-  // Drag and Drop
 
   var DropInput = {
     'ad-form-header__drop-zone': createAvatar,
@@ -139,10 +138,10 @@
   };
 
   var removeDragDropHandlers = function (dragDropElement) {
-    dragDropElement.addEventListener('dragenter', dragEnterHandler);
-    dragDropElement.addEventListener('dragover', dragOverHandler);
-    dragDropElement.addEventListener('dragleave', dragLeaveHandler);
-    dragDropElement.addEventListener('drop', dragDropHandler);
+    dragDropElement.removeEventListener('dragenter', dragEnterHandler);
+    dragDropElement.removeEventListener('dragover', dragOverHandler);
+    dragDropElement.removeEventListener('dragleave', dragLeaveHandler);
+    dragDropElement.removeEventListener('drop', dragDropHandler);
   };
 
   var addImageHandlers = function () {
