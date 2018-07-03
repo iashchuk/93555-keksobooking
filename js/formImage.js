@@ -54,22 +54,26 @@
   };
 
   /**
+   * Функция проверки типа загружаемого файла
+   * @param {Object} file
+   * @return {boolean}
+   */
+  var isCorrectType = function (file) {
+    return FILE_TYPES.some(function (it) {
+      return file.name.toLowerCase().endsWith(it);
+    });
+  };
+
+  /**
    * Функция загрузки файлов
    * @param {Node} formField
    * @param {function} callback
    */
   var loadFile = function (formField, callback) {
     var files = Array.from(formField.files);
+    var correctFiles = files.filter(isCorrectType);
 
-    var matches = function (file) {
-      return FILE_TYPES.some(function (it) {
-        return file.name.toLowerCase().endsWith(it);
-      });
-    };
-
-    var matchesFiles = files.filter(matches);
-
-    matchesFiles.forEach(function (item) {
+    correctFiles.forEach(function (item) {
       var reader = new FileReader();
 
       reader.addEventListener('load', function () {
