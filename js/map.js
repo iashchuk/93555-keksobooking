@@ -44,8 +44,6 @@
     window.backend.load(onLoadSuccess, onLoadError);
     map.classList.remove('map--faded');
     window.form.init();
-    var pinPosition = window.mainPin.getPosition();
-    window.form.setAddress(pinPosition);
     mapPinMain.removeEventListener('mousedown', activateMap);
   };
 
@@ -62,6 +60,7 @@
 
   var initMap = function () {
     window.form.deactivate();
+    window.form.setAddress(window.mainPin.getPosition());
     mapPinMain.addEventListener('mousedown', activateMap);
   };
 
