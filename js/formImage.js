@@ -28,7 +28,6 @@
     DEFAULT: ''
   };
 
-
   /**
    * Функция создания аватара для загрузки
    * @param {string} value
@@ -53,7 +52,6 @@
     newPhoto.appendChild(image);
     photoContainer.insertBefore(newPhoto, photo);
   };
-
 
   /**
    * Функция загрузки файлов
@@ -101,9 +99,6 @@
     loadFile(photoInput, createImage);
   };
 
-
-  // Drag and Drop
-
   var DropInput = {
     'ad-form-header__drop-zone': createAvatar,
     'ad-form__drop-zone': createImage
@@ -139,10 +134,10 @@
   };
 
   var removeDragDropHandlers = function (dragDropElement) {
-    dragDropElement.addEventListener('dragenter', dragEnterHandler);
-    dragDropElement.addEventListener('dragover', dragOverHandler);
-    dragDropElement.addEventListener('dragleave', dragLeaveHandler);
-    dragDropElement.addEventListener('drop', dragDropHandler);
+    dragDropElement.removeEventListener('dragenter', dragEnterHandler);
+    dragDropElement.removeEventListener('dragover', dragOverHandler);
+    dragDropElement.removeEventListener('dragleave', dragLeaveHandler);
+    dragDropElement.removeEventListener('drop', dragDropHandler);
   };
 
   var addImageHandlers = function () {

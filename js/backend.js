@@ -21,7 +21,15 @@
     }
   };
 
-
+  /**
+   * Создание XHR
+   * @param {function} onLoad
+   * @param {function} onError
+   * @param {string} url
+   * @param {string} method
+   * @param {number} timeout
+   * @param {Object} data
+   */
   var setupXHR = function (onLoad, onError, url, method, timeout, data) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
