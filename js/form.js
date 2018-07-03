@@ -9,13 +9,13 @@
 
   var form = document.querySelector('.ad-form');
   var titleInput = form.querySelector('#title');
-  var inputType = form.querySelector('#type');
-  var inputPrice = form.querySelector('#price');
-  var inputTimeIn = form.querySelector('#timein');
-  var inputTimeOut = form.querySelector('#timeout');
-  var inputRooms = form.querySelector('#room_number');
-  var inputGuests = form.querySelector('#capacity');
-  var optionGuests = inputGuests.querySelectorAll('option');
+  var typeInput = form.querySelector('#type');
+  var priceInput = form.querySelector('#price');
+  var timeInInput = form.querySelector('#timein');
+  var timeOutInput = form.querySelector('#timeout');
+  var roomsInput = form.querySelector('#room_number');
+  var guestsInput = form.querySelector('#capacity');
+  var optionGuests = guestsInput.querySelectorAll('option');
   var formReset = form.querySelector('.ad-form__reset');
   var fieldsets = form.querySelectorAll('fieldset');
   var addressInput = form.querySelector('#address');
@@ -47,8 +47,8 @@
 
   // Функция установки минимальных цен в зависимости от типа дома
   var onTypeInputChange = function () {
-    inputPrice.min = TypePrice[inputType.value];
-    inputPrice.placeholder = TypePrice[inputType.value];
+    priceInput.min = TypePrice[typeInput.value];
+    priceInput.placeholder = TypePrice[typeInput.value];
   };
 
   // Функция синхронного изменение времени заезда и выезда
@@ -57,23 +57,23 @@
   };
 
   var onTimeOutInputChange = function () {
-    setTime(inputTimeIn, inputTimeOut.value);
+    setTime(timeInInput, timeOutInput.value);
   };
 
   var onTimeInInputChange = function () {
-    setTime(inputTimeOut, inputTimeIn.value);
+    setTime(timeOutInput, timeInInput.value);
   };
 
 
   // Функция установки количества комнат, взависимости от числа гостей
   var onRoomInputChange = function () {
-    var room = inputRooms[inputRooms.selectedIndex].value;
+    var room = roomsInput[roomsInput.selectedIndex].value;
     var selectedValue = RoomGuests[room];
 
     optionGuests.forEach(function (option) {
       option.disabled = !selectedValue.includes(option.value);
     });
-    inputGuests.value = selectedValue.includes(inputGuests.value) ? inputGuests.value : selectedValue[0];
+    guestsInput.value = selectedValue.includes(guestsInput.value) ? guestsInput.value : selectedValue[0];
   };
 
   /**
@@ -149,26 +149,28 @@
 
   var addFormHandlers = function () {
     titleInput.addEventListener('change', onInputCheckValidity);
-    inputType.addEventListener('change', onTypeInputChange);
-    inputPrice.addEventListener('change', onInputCheckValidity);
-    inputTimeIn.addEventListener('change', onTimeInInputChange);
-    inputTimeOut.addEventListener('change', onTimeOutInputChange);
-    inputRooms.addEventListener('change', onRoomInputChange);
+    typeInput.addEventListener('change', onTypeInputChange);
+    priceInput.addEventListener('change', onInputCheckValidity);
+    timeInInput.addEventListener('change', onTimeInInputChange);
+    timeOutInput.addEventListener('change', onTimeOutInputChange);
+    roomsInput.addEventListener('change', onRoomInputChange);
     formReset.addEventListener('click', clearForm);
     form.addEventListener('invalid', onFormInvalid, true);
     form.addEventListener('submit', onFormSubmit);
+    window.formImage.addHandlers();
   };
 
   var removeFormHandlers = function () {
     titleInput.removeEventListener('change', onInputCheckValidity);
-    inputType.removeEventListener('change', onTypeInputChange);
-    inputPrice.removeEventListener('change', onInputCheckValidity);
-    inputTimeIn.removeEventListener('change', onTimeInInputChange);
-    inputTimeOut.removeEventListener('change', onTimeOutInputChange);
-    inputRooms.removeEventListener('change', onRoomInputChange);
+    typeInput.removeEventListener('change', onTypeInputChange);
+    priceInput.removeEventListener('change', onInputCheckValidity);
+    timeInInput.removeEventListener('change', onTimeInInputChange);
+    timeOutInput.removeEventListener('change', onTimeOutInputChange);
+    roomsInput.removeEventListener('change', onRoomInputChange);
     formReset.removeEventListener('click', clearForm);
     form.removeEventListener('invalid', onFormInvalid, true);
     form.removeEventListener('submit', onFormSubmit);
+    window.formImage.removeHandlers();
   };
 
   // Функция активации формы
@@ -198,6 +200,7 @@
     form.reset();
     deactivateForm();
     window.map.deactivate();
+    window.formImage.remove();
   };
 
   window.form = {
