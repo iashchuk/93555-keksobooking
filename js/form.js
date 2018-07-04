@@ -201,6 +201,7 @@
     deactivateForm();
     window.map.deactivate();
     window.formImage.remove();
+    window.form.setAddress(window.mainPin.getPosition());
   };
 
   window.form = {
